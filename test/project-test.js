@@ -16,7 +16,7 @@ describe("Project contract", function () {
         projectContract = await projectContractFactory.deploy(creator.address,"Buy some toys","Buy some toys",expiretime,100);
         await projectContract.deployed();
 
-        expect(projectContract.address).to.not.equal(null);
+        expect(projectContract.address).to.not.be.null;
     });
 
     it('Get details of a new project', async function () {

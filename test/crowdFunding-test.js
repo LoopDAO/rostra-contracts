@@ -11,7 +11,7 @@ describe("CrowdFunding contract", function() {
         crowdFundingContract = await crowdFundingContractFactory.deploy();
         await crowdFundingContract.deployed();
 
-        expect(crowdFundingContract.address).to.not.equal(null);
+        expect(crowdFundingContract.address).to.not.be.null;
       });
 
     it("Whenever you can start a new crowdfunding project", async function () {
