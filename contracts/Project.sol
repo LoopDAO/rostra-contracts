@@ -1,4 +1,6 @@
-pragma solidity 0.5.4;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.4;
+
 import "./SafeMath.sol";
 
 contract Project {
@@ -46,7 +48,7 @@ contract Project {
         string memory projectDesc,
         uint fundRaisingDeadline,
         uint goalAmount
-    ) public {
+    ) {
         creator = projectStarter;
         title = projectTitle;
         description = projectDesc;
@@ -71,10 +73,10 @@ contract Project {
         if (currentBalance >= amountGoal) {
             state = State.Successful;
             payOut();
-        } else if (now > raiseBy)  {
+        } else if (block.timestamp > raiseBy)  {
             state = State.Expired;
         }
-        completeAt = now;
+        completeAt = block.timestamp;
     }
 
     /** @dev Function to give the received funds to project starter.
@@ -102,7 +104,7 @@ contract Project {
         uint amountToRefund = contributions[msg.sender];
         contributions[msg.sender] = 0;
 
-        if (!msg.sender.send(amountToRefund)) {
+        if (!payable(msg.sender).send(amountToRefund)) {
             contributions[msg.sender] = amountToRefund;
             return false;
         } else {
@@ -113,7 +115,6 @@ contract Project {
     }
 
     /** @dev Function to get specific information about the project.
-      * @return Returns all the project's details
       */
     function getDetails() public view returns
     (

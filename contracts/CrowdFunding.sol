@@ -1,5 +1,6 @@
-pragma solidity 0.5.4;
-// Importing OpenZeppelin's SafeMath Implementation
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.4;
+
 import './SafeMath.sol';
 import './Project.sol';
 
@@ -32,8 +33,8 @@ contract CrowdFunding {
         uint durationInDays,
         uint amountToRaise
     ) external {
-        uint raiseUntil = now.add(durationInDays.mul(1 days));
-        Project newProject = new Project(msg.sender, title, description, raiseUntil, amountToRaise);
+        uint raiseUntil = block.timestamp.add(durationInDays.mul(1 days));
+        Project newProject = new Project(payable(msg.sender), title, description, raiseUntil, amountToRaise);
         projects.push(newProject);
         emit ProjectStarted(
             address(newProject),
