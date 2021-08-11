@@ -29,24 +29,17 @@ describe("Project contract", function () {
     })
 
     it('Donate with calling contribute ', async function () {
-        let overrides = {
-            // To convert Ether to Wei:
-            value: 10,
-        }
+        const donation = { value: 10 }
 
-        await projectContract.connect(donator1).contribute(overrides)
+        await projectContract.connect(donator1).contribute(donation)
 
         expect(parseInt(await projectContract.currentBalance())).to.equal(10)
     })
 
-
     it('Donate 101', async function () {
-        let overrides = {
-            // To convert Ether to Wei:
-            value: 101,
-        }
+        const donation = { value: 101 }
 
-        await projectContract.connect(donator1).contribute(overrides)
+        await projectContract.connect(donator1).contribute(donation)
 
         expect(parseInt(await projectContract.state())).to.equal(2)
     })
