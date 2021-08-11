@@ -44,5 +44,41 @@ describe("Project contract", function () {
         expect(parseInt(await projectContract.state())).to.equal(2)
     })
 
+    // todo
+    it('Funding failed, user get refund', async function () {
+    })
+
+    // todo
+    it('Funding succeeds, creator start to work', async function () {
+    })
+
+    // todo
+    it('Creator submit work before deadline', async function () {
+    })
+
+    // todo// accept the work
+    it('Investors do not oppose, creator can get money after 7 days', async function () {
+    })
+
+    // todo
+    it('Investors do not oppose, there will be a NFT minted', async function () {
+    })
+
+    // todo
+    it('Investors do not oppose, they can claim erc20 token per investment', async function () {
+    })
+
+    // todo: oppose the work
+    it('Investors oppose, but do not reach 67% votes in 7 days, creator can get 100% money', async function () {
+    })
+
+    // todo
+    it('Investors oppose, and reach 67% votes in 7 days, creator can get 50% money, investors get 50% refund', async function () {
+    })
+
+    // todo
+    it('Creator does not submit work before deadline, investors get 100% refund', async function () {
+    })
+
 });
 
