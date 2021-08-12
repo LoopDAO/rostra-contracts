@@ -35,7 +35,7 @@ describe("Project contract", function () {
 
         await projectContract.connect(donator1).contribute(donation)
 
-        expect(parseInt(await projectContract.currentBalance())).to.equal(10)
+        expect(await projectContract.currentBalance()).to.equal(10)
     })
 
     it('Donate 101', async function () {
@@ -43,16 +43,13 @@ describe("Project contract", function () {
 
         await projectContract.connect(donator1).contribute(donation);
 
-        expect(parseInt(await projectContract.state())).to.equal(2);
+        expect(await projectContract.state()).to.equal(2);
     })
 
-    // todo
     it('Funding failed, user get refund', async function () {
-        const donation = { value: 99 };
+        await projectContract.connect(donator1).contribute({ value: 90 });
 
-        await projectContract.connect(donator1).contribute(donation);
-
-        expect(await projectContract.currentBalance()).to.equal(99);
+        expect(await projectContract.currentBalance()).to.equal(90);
 
         const blockNumBefore = await ethers.provider.getBlockNumber();
         const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -68,16 +65,19 @@ describe("Project contract", function () {
         expect(blockNumAfter).to.be.equal(blockNumBefore + 1);
         expect(timestampAfter).to.be.equal(timestampBefore + sevenDays);
 
-        // expect(parseInt(await projectContract.state())).to.equal(1);
+        await projectContract.connect(donator2).contribute({ value: 9 });
 
-        // const balanceBefore = donator1.balance;
+        expect(await projectContract.currentBalance()).to.equal(99);
 
-        // expect(balanceBefore).to.be.above(0);
+        expect(await projectContract.state()).to.equal(1);
 
-        // await projectContract.connect(donator1).getRefund();
+        await projectContract.connect(donator1).getRefund();
 
-        // const balanceAfter = donator1.balance;
-        // expect(balanceAfter).to.be.equal(balanceBefore + 99);
+        expect(await projectContract.currentBalance()).to.equal(9)
+
+        await projectContract.connect(donator2).getRefund();
+
+        expect(await projectContract.currentBalance()).to.equal(0)
     })
 
     // todo
