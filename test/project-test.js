@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers } = require('hardhat');
 
 describe("Project contract", function () {
     let projectContractFactory;
@@ -8,18 +8,20 @@ describe("Project contract", function () {
     let donator1;
     let donator2;
 
-    beforeEach(async function () {
-        [creator,donator1,donator2] = await ethers.getSigners();
-        projectContractFactory = await ethers.getContractFactory("Project");
-        const expiretime = parseInt(new Date().getTime()/1000) + 7 * 24 * 60 * 60
+    const sevenDays = 7 * 24 * 60 * 60;
 
-        projectContract = await projectContractFactory.deploy(creator.address,"Buy some toys","Buy some toys",expiretime,100);
+    beforeEach(async function () {
+        [creator, donator1, donator2] = await ethers.getSigners();
+        projectContractFactory = await ethers.getContractFactory("Project");
+        const expiretime = parseInt(new Date().getTime()/1000) + sevenDays;
+
+        projectContract = await projectContractFactory.deploy(creator.address,"Research Uni V3","We will produce 3 videos", expiretime, 100);
 
         expect(projectContract.address).to.not.be.null;
     });
 
     it('Get details of a new project', async function () {
-        let projectDetail = await projectContract.getDetails()
+        const projectDetail = await projectContract.getDetails()
         expect(projectDetail.goalAmount).to.equal(100)
     })
 
@@ -37,15 +39,45 @@ describe("Project contract", function () {
     })
 
     it('Donate 101', async function () {
-        const donation = { value: 101 }
+        const donation = { value: 101 };
 
-        await projectContract.connect(donator1).contribute(donation)
+        await projectContract.connect(donator1).contribute(donation);
 
-        expect(parseInt(await projectContract.state())).to.equal(2)
+        expect(parseInt(await projectContract.state())).to.equal(2);
     })
 
     // todo
     it('Funding failed, user get refund', async function () {
+        const donation = { value: 99 };
+
+        await projectContract.connect(donator1).contribute(donation);
+
+        expect(await projectContract.currentBalance()).to.equal(99);
+
+        const blockNumBefore = await ethers.provider.getBlockNumber();
+        const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+        const timestampBefore = blockBefore.timestamp;
+
+        await ethers.provider.send('evm_increaseTime', [sevenDays]);
+        await ethers.provider.send('evm_mine');
+
+        const blockNumAfter = await ethers.provider.getBlockNumber();
+        const blockAfter = await ethers.provider.getBlock(blockNumAfter);
+        const timestampAfter = blockAfter.timestamp;
+
+        expect(blockNumAfter).to.be.equal(blockNumBefore + 1);
+        expect(timestampAfter).to.be.equal(timestampBefore + sevenDays);
+
+        // expect(parseInt(await projectContract.state())).to.equal(1);
+
+        // const balanceBefore = donator1.balance;
+
+        // expect(balanceBefore).to.be.above(0);
+
+        // await projectContract.connect(donator1).getRefund();
+
+        // const balanceAfter = donator1.balance;
+        // expect(balanceAfter).to.be.equal(balanceBefore + 99);
     })
 
     // todo
