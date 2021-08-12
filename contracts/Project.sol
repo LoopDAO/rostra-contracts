@@ -10,6 +10,10 @@ contract Project {
     enum State {
         Fundraising,
         Expired,
+        WorkStarted,
+        WorkSubmitted,
+        Voting,
+        Refunded,
         Successful
     }
 
