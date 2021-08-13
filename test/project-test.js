@@ -40,16 +40,19 @@ describe("Project contract", function () {
             uri: "https://rostra.xyz/api/nft-uri?id=",
             price: 10, // dai
             limit: 100,
-            reserved: 20 // reserved nft amount
+            // reserved: 20 // reserved nft amount
         }
 
-        await projectContract.setNFTInfo(
+        await projectContract.initialize(
             nftInfo.name,
             nftInfo.symbol,
-            nftInfo.uri,
+            nftInfo.uri
+        )
+
+        await projectContract.setNFTInfo(
             nftInfo.price,
             nftInfo.limit,
-            nftInfo.reserved
+            // nftInfo.reserved
         )
     })
 
@@ -64,8 +67,8 @@ describe("Project contract", function () {
         const nftContractAddress = await projectContract.getNFTAddress()
         expect(nftContractAddress).to.notEmpty()
 
-        const nftTotalBefore = nftContractAddress.totalSupply()
-        expect(nftTotalBefore).to.equal(1)
+        const nftTotalBefore = nftContractAddress.getCurrentNFTId()
+        expect(nftTotalBefore).to.equal(0)
 
         const nftAmountToBuy = 10
 
