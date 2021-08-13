@@ -10,12 +10,12 @@ describe("Project contract", function () {
 
     const SEVEN_DAYS = 7 * 24 * 60 * 60
 
-    const name = "Research Uni V3"
+    const title = "Research Uni V3"
     const description = "We will produce 3 videos"
     const timeToSubmitWork = parseInt(new Date().getTime()/1000) + SEVEN_DAYS
 
     const workResult = {
-        name: 'Uni V3 analysis video',
+        title: 'Uni V3 analysis video',
         desc: 'Hope you enjoy our work',
         url: 'https://rostra.xyz/projects/0'
     }
@@ -27,7 +27,7 @@ describe("Project contract", function () {
 
         projectContract = await projectContractFactory.deploy(
             creator.address,
-            name,
+            title,
             description,
             timeToSubmitWork
         )
@@ -40,7 +40,7 @@ describe("Project contract", function () {
             uri: "https://rostra.xyz/api/nft-uri?id=",
             price: 10, // dai
             limit: 100,
-            creator: 20 // creator nft amount
+            reserved: 20 // reserved nft amount
         }
 
         await projectContract.setNFTInfo(
@@ -49,18 +49,18 @@ describe("Project contract", function () {
             nftInfo.uri,
             nftInfo.price,
             nftInfo.limit,
-            nftInfo.creator
+            nftInfo.reserved
         )
     })
 
-    xit('Get project details', async function () {
-        const projectDetail = await projectContract.getDetails()
-        expect(projectDetail.creator).to.equal(creator.address)
-        expect(projectDetail.description).to.equal(description)
-        expect(projectDetail.timeToSubmitWork).to.equal(timeToSubmitWork)
+    it('Get project details', async function () {
+        expect(await projectContract.creator()).to.equal(creator.address)
+        expect(await projectContract.title()).to.equal(title)
+        expect(await projectContract.description()).to.equal(description)
+        expect(await projectContract.timeToSubmitWork()).to.equal(timeToSubmitWork)
     })
 
-    xit('Buy 10 NFTs', async function () {
+    it('Buy 10 NFTs', async function () {
         const nftContractAddress = await projectContract.getNFTAddress()
         expect(nftContractAddress).to.notEmpty()
 
@@ -78,7 +78,7 @@ describe("Project contract", function () {
 
     })
 
-    xit('Creator does not submit work, investors get 100% refund', async function () {
+    it('Creator does not submit work, investors get 100% refund', async function () {
         const nftAmountToBuy = 10
 
         await projectContract.connect(donator1).contribute(nftAmountToBuy)
@@ -99,7 +99,7 @@ describe("Project contract", function () {
         expect(await projectContract.currentBalance()).to.equal(0)
     })
 
-    xit('Creator submitted work: Creator can get money after 7 days', async function () {
+    it('Creator submitted work: Creator can get money after 7 days', async function () {
         const nftAmountToBuy = 10
 
         await projectContract.connect(donator1).contribute(nftAmountToBuy)
@@ -119,7 +119,7 @@ describe("Project contract", function () {
         expect(await projectContract.currentBalance()).to.equal(0)
     })
 
-    xit('Creator submitted work: investors can get 50% refund', async function () {
+    it('Creator submitted work: investors can get 50% refund', async function () {
         const nftAmountToBuy = 10
 
         await projectContract.connect(donator1).contribute(nftAmountToBuy)

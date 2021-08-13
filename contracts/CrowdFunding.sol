@@ -17,32 +17,28 @@ contract CrowdFunding {
         address projectStarter,
         string projectTitle,
         string projectDesc,
-        uint256 deadline,
-        uint256 goalAmount
+        uint256 deadline
     );
 
     /** @dev Function to start a new project.
       * @param title Title of the project to be created
       * @param description Brief description about the project
       * @param durationInDays Project deadline in days
-      * @param amountToRaise Project goal in wei
       */
     function startProject(
         string calldata title,
         string calldata description,
-        uint durationInDays,
-        uint amountToRaise
+        uint durationInDays
     ) external {
         uint raiseUntil = block.timestamp.add(durationInDays.mul(1 days));
-        Project newProject = new Project(payable(msg.sender), title, description, raiseUntil, amountToRaise);
+        Project newProject = new Project(payable(msg.sender), title, description, raiseUntil);
         projects.push(newProject);
         emit ProjectStarted(
             address(newProject),
             msg.sender,
             title,
             description,
-            raiseUntil,
-            amountToRaise
+            raiseUntil
         );
     }
 
