@@ -2,7 +2,7 @@
 pragma solidity 0.8.4;
 
 // import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+// import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "./SafeMath.sol";
 import "./ERC721Base.sol";
@@ -17,6 +17,8 @@ contract Project is ERC721Base {
     string public title;
     string public description;
     uint256 public timeToSubmitWork;
+
+    uint256 public currentBalance;
 
     uint256 nftPrice;
     uint256 nftLimit;
@@ -60,11 +62,15 @@ contract Project is ERC721Base {
         uint256 _contributionAmount = _nftAmountToBuy * nftPrice;
         require(_contributionAmount == msg.value, "Token amount incorrect");
 
-        nftIdCounter.increment();
-        _safeMint(msg.sender, nftIdCounter.current());
+        currentBalance = currentBalance.add(msg.value);
+
+        for (uint256 i = 0; i < _nftAmountToBuy; i++) {
+            _safeMint(msg.sender, nftIdCounter.current());
+            nftIdCounter.increment();
+        }
 
         // todo: event
-
+        emit Contributed(msg.sender, _nftAmountToBuy);
         return true;
     }
 
@@ -72,8 +78,10 @@ contract Project is ERC721Base {
         return address(this);
     }
 
-    function getCurrentNFTId() external view returns(uint256) {
+    function getNextNFTId() external view returns(uint256) {
         return nftIdCounter.current();
     }
+
+    event Contributed(address indexed _contributor, uint256 _nftAmount);
 
 }

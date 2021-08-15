@@ -20,6 +20,14 @@ describe("Project contract", function () {
         url: 'https://rostra.xyz/projects/0'
     }
 
+    const nftInfo = {
+        name: "Research Uni V3",
+        symbol: "RUV3",
+        uri: "https://rostra.xyz/api/nft-uri?id=",
+        price: 10, // dai
+        limit: 100,
+        // reserved: 20 // reserved nft amount
+    }
     beforeEach(async function () {
         [creator, donator1, donator2] = await ethers.getSigners()
         projectContractFactory = await ethers.getContractFactory("Project")
@@ -33,15 +41,6 @@ describe("Project contract", function () {
         )
 
         expect(projectContract.address).to.not.be.null
-
-        const nftInfo = {
-            name: "Research Uni V3",
-            symbol: "RUV3",
-            uri: "https://rostra.xyz/api/nft-uri?id=",
-            price: 10, // dai
-            limit: 100,
-            // reserved: 20 // reserved nft amount
-        }
 
         await projectContract.initialize(
             nftInfo.name,
@@ -65,18 +64,19 @@ describe("Project contract", function () {
 
     it('Buy 10 NFTs', async function () {
         const nftContractAddress = await projectContract.getNFTAddress()
-        expect(nftContractAddress).to.notEmpty()
+        expect(nftContractAddress).is.not.null;
 
-        const nftTotalBefore = nftContractAddress.getCurrentNFTId()
+        const nftTotalBefore = await projectContract.getNextNFTId()
         expect(nftTotalBefore).to.equal(0)
 
         const nftAmountToBuy = 10
 
-        await projectContract.connect(donator1).contribute(nftAmountToBuy)
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
 
         expect(await projectContract.currentBalance()).to.equal(nftAmountToBuy * nftInfo.price) // 100
 
-        const nftTotalAfter = nftContractAddress.totalSupply()
+        const nftTotalAfter = await projectContract.getNextNFTId()
         expect(nftTotalAfter).to.equal(10)
 
     })

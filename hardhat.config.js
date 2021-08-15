@@ -45,6 +45,12 @@ module.exports = {
     ]
   },
   networks: {
+    hardhat: {
+      chainId: 31337,
+      gas: 12000000,
+      blockGasLimit: 0x1fffffffffffff,
+      allowUnlimitedContractSize: true
+    },
     localhost: {
       url: "http://localhost:8545",
       //gasPrice: 125000000000,//you can adjust gasPrice locally to see how much it will cost on production
