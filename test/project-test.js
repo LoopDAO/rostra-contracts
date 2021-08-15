@@ -16,7 +16,7 @@ describe("Project contract", function () {
 
     const workResult = {
         title: 'Uni V3 analysis video',
-        desc: 'Hope you enjoy our work',
+        description: 'Hope you enjoy our work',
         url: 'https://rostra.xyz/projects/0'
     }
 
@@ -98,7 +98,7 @@ describe("Project contract", function () {
         await ethers.provider.send('evm_mine')
 
         await expect(projectContract.withdraw())
-            .to.be.revertedWith('You must submit work before you can withdraw')
+            .to.be.revertedWith('Project is not complete')
 
         await projectContract.connect(donator1).refund() // donator1 get refund 100%(100)
         expect(await projectContract.currentBalance()).to.equal(100)
@@ -115,15 +115,20 @@ describe("Project contract", function () {
         await projectContract.connect(donator2)
             .contribute(nftAmountToBuy, { value: 100 })
 
-        await projectContract.finishWork(workResult)
+        await projectContract.finishWork(workResult.title, workResult.description, workResult.url)
 
-        expect(await projectContract.withdraw())
+        expect(await projectContract.isWorkSubmitted()).to.equal(true)
+
+        await expect(projectContract.withdraw())
             .to.be.revertedWith('Project is not complete')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
         expect(await projectContract.currentBalance()).to.equal(200)
+        
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_mine')
 
         await projectContract.withdraw()
 
@@ -140,12 +145,12 @@ describe("Project contract", function () {
 
         expect(await projectContract.currentBalance()).to.equal(200)
 
-        await projectContract.finishWork(workResult)
+        await projectContract.finishWork(workResult.title, workResult.description, workResult.url)
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
-        expect(await projectContract.withdraw())
+        await expect(projectContract.withdraw())
             .to.be.revertedWith('Need to wait for 7 days in case any refund')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
@@ -170,12 +175,12 @@ describe("Project contract", function () {
         await projectContract.connect(donator2)
             .contribute(nftAmountToBuy, { value: 100 })
 
-        await projectContract.finishWork(workResult)
+        await projectContract.finishWork(workResult.title, workResult.description, workResult.url)
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
-        expect(await projectContract.withdraw())
+        await expect(projectContract.withdraw())
             .to.be.revertedWith('Need to wait for 7 days in case any refund')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS + 1])
@@ -207,12 +212,12 @@ describe("Project contract", function () {
         await projectContract.connect(donator2)
             .contribute(nftAmountToBuy, { value: 100 })
 
-        await projectContract.finishWork(workResult)
+        await projectContract.finishWork(workResult.title, workResult.description, workResult.url)
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
-        expect(await projectContract.withdraw())
+        await expect(projectContract.withdraw())
             .to.be.revertedWith('Need to wait for 7 days in case any refund')
 
         const nextNFTId = await projectContract.getNextNFTId()
