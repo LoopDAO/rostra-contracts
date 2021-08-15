@@ -76,41 +76,49 @@ describe("Project contract", function () {
 
         expect(await projectContract.currentBalance()).to.equal(nftAmountToBuy * nftInfo.price) // 100
 
-        const nftTotalAfter = await projectContract.getNextNFTId()
-        expect(nftTotalAfter).to.equal(10)
+        // const nftTotalAfter = await projectContract.getNextNFTId()
+        // expect(nftTotalAfter).to.equal(10)
 
     })
 
     it('Creator does not submit work, investors get 100% refund', async function () {
         const nftAmountToBuy = 10
 
-        await projectContract.connect(donator1).contribute(nftAmountToBuy)
-        await projectContract.connect(donator2).contribute(nftAmountToBuy)
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
+        await projectContract.connect(donator2)
+            .contribute(nftAmountToBuy, { value: 100 })
 
         expect(await projectContract.currentBalance()).to.equal(200)
+
+        await expect(projectContract.withdraw())
+            .to.be.revertedWith('Project is not complete')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
-        expect(await projectContract.withdraw())
-            .revertedWithError(Error('Project is not complete'))
+        await expect(projectContract.withdraw())
+            .to.be.revertedWith('You must submit work before you can withdraw')
 
-        await projectContract.connect(donator1).getRefund() // donator1 get refund 100%(100)
+        await projectContract.connect(donator1).refund() // donator1 get refund 100%(100)
         expect(await projectContract.currentBalance()).to.equal(100)
 
-        await projectContract.connect(donator2).getRefund() // donator2 get refund 100%(100)
+        await projectContract.connect(donator2).refund() // donator2 get refund 100%(100)
         expect(await projectContract.currentBalance()).to.equal(0)
     })
 
     it('Creator submitted work: Creator can get money after 7 days', async function () {
         const nftAmountToBuy = 10
 
-        await projectContract.connect(donator1).contribute(nftAmountToBuy)
-        await projectContract.connect(donator2).contribute(nftAmountToBuy)
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
+        await projectContract.connect(donator2)
+            .contribute(nftAmountToBuy, { value: 100 })
 
         await projectContract.finishWork(workResult)
 
-        expect(await projectContract.withdraw()).revertedWithError(Error('Project is not complete'))
+        expect(await projectContract.withdraw())
+            .to.be.revertedWith('Project is not complete')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
@@ -125,8 +133,10 @@ describe("Project contract", function () {
     it('Creator submitted work: investors can get 50% refund', async function () {
         const nftAmountToBuy = 10
 
-        await projectContract.connect(donator1).contribute(nftAmountToBuy)
-        await projectContract.connect(donator2).contribute(nftAmountToBuy)
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
+        await projectContract.connect(donator2)
+            .contribute(nftAmountToBuy, { value: 100 })
 
         expect(await projectContract.currentBalance()).to.equal(200)
 
@@ -136,16 +146,98 @@ describe("Project contract", function () {
         await ethers.provider.send('evm_mine')
 
         expect(await projectContract.withdraw())
-            .revertedWithError(Error('Need to wait for 7 days in case any refund'))
+            .to.be.revertedWith('Need to wait for 7 days in case any refund')
 
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
-        await projectContract.connect(donator1).getRefund() // donator1 get refund 50%(50)
+        await projectContract.connect(donator1).refund() // donator1 get refund 50%(50)
         expect(await projectContract.currentBalance()).to.equal(150)
 
-        await projectContract.connect(donator2).getRefund() // donator2 get refund 50%(50)
+        await projectContract.connect(donator2).refund() // donator2 get refund 50%(50)
         expect(await projectContract.currentBalance()).to.equal(100)
+
+        // creator withdraw remaining
+        await projectContract.withdraw()
+        expect(await projectContract.currentBalance()).to.equal(0)
+    })
+
+    it('Creator submitted work: investors can claim nft after 1 week', async function () {
+        const nftAmountToBuy = 10
+
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
+        await projectContract.connect(donator2)
+            .contribute(nftAmountToBuy, { value: 100 })
+
+        await projectContract.finishWork(workResult)
+
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_mine')
+
+        expect(await projectContract.withdraw())
+            .to.be.revertedWith('Need to wait for 7 days in case any refund')
+
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS + 1])
+        await ethers.provider.send('evm_mine')
+
+        const nextNFTId = await projectContract.getNextNFTId()
+        expect(nextNFTId).to.equal(0)
+
+        await projectContract.connect(donator1).claimNFT() // got 10 nft
+        const nextNFTId1 = await projectContract.getNextNFTId()
+        expect(nextNFTId1).to.equal(10)
+
+        await projectContract.connect(donator2).claimNFT() // got 10 nft
+        const nextNFTId2 = await projectContract.getNextNFTId()
+        expect(nextNFTId2).to.equal(20)
+
+        expect(await projectContract.currentBalance()).to.equal(200)
+
+        // creator withdraw remaining
+        await projectContract.withdraw()
+        expect(await projectContract.currentBalance()).to.equal(0)
+    })
+
+    it('Creator submitted work: investors can not claim nft if refunded', async function () {
+        const nftAmountToBuy = 10
+
+        await projectContract.connect(donator1)
+            .contribute(nftAmountToBuy, { value: 100 })
+        await projectContract.connect(donator2)
+            .contribute(nftAmountToBuy, { value: 100 })
+
+        await projectContract.finishWork(workResult)
+
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_mine')
+
+        expect(await projectContract.withdraw())
+            .to.be.revertedWith('Need to wait for 7 days in case any refund')
+
+        const nextNFTId = await projectContract.getNextNFTId()
+        expect(nextNFTId).to.equal(0)
+
+        await projectContract.connect(donator1).claimNFT() // got 10 nft
+        await expect(projectContract.connect(donator1).claimNFT())
+            .to.be.revertedWith('You have already claimed NFT')
+        await expect(projectContract.connect(donator1).refund())
+            .to.be.revertedWith('You have already claimed NFT')
+
+        const nextNFTId1 = await projectContract.getNextNFTId()
+        expect(nextNFTId1).to.equal(10)
+
+        await projectContract.connect(donator2).refund() // donator2 get refund 50%(50)
+
+        await expect(projectContract.connect(donator1).claimNFT())
+            .to.be.revertedWith('You have already refunded')
+        await expect(projectContract.connect(donator1).refund())
+            .to.be.revertedWith('You have already refunded')
+
+        const nextNFTId2 = await projectContract.getNextNFTId()
+        expect(nextNFTId2).to.equal(10)
+
+        expect(await projectContract.currentBalance()).to.equal(150)
 
         // creator withdraw remaining
         await projectContract.withdraw()
