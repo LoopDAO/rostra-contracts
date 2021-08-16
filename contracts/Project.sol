@@ -19,7 +19,7 @@ contract Project is
 
     CountersUpgradeable.Counter public nftIdCounter;
 
-    uint256 gracePeriod = 7 days;
+    uint256 public gracePeriod = 7 days;
 
     address payable public creator;
     string public title;
@@ -103,10 +103,13 @@ contract Project is
         return true;
     }
 
-    function withdraw() external payable returns (bool) {
+    function withdraw() external returns (bool) {
         require(msg.sender == creator, "You must be the project creator to withdraw");
         // require(isWorkSubmitted, "You must submit work before you can withdraw");
-        require(isWorkSubmitted && block.timestamp >= timeToSubmitWork.add(gracePeriod), "Project is not complete");
+        require(
+            isWorkSubmitted && block.timestamp >= timeToSubmitWork.add(gracePeriod),
+            "Project is not complete"
+        );
         payable(msg.sender).send(currentBalance);
         currentBalance = 0;
         return true;
@@ -116,6 +119,7 @@ contract Project is
         external returns (bool)
     {
         require(msg.sender == creator, "Only creator");
+        require(!isWorkSubmitted && block.timestamp < timeToSubmitWork, "Too late");
         isWorkSubmitted = true;
         workTitle = _title;
         workDescription = _description;

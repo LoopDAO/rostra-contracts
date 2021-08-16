@@ -8,12 +8,12 @@ describe("Project contract", function () {
     let donator1
     let donator2
 
+    const ONE_DAY = 24 * 60 * 60
     const SEVEN_DAYS = 7 * 24 * 60 * 60
 
     const title = "Research Uni V3"
     const description = "We will produce 3 videos"
-    const timeToSubmitWork = parseInt(new Date().getTime()/1000) + SEVEN_DAYS
-
+    let timeToSubmitWork
     const workResult = {
         title: 'Uni V3 analysis video',
         description: 'Hope you enjoy our work',
@@ -32,6 +32,11 @@ describe("Project contract", function () {
         [creator, donator1, donator2] = await ethers.getSigners()
         projectContractFactory = await ethers.getContractFactory("Project")
 
+        const blockNum = await ethers.provider.getBlockNumber();
+        const block = await ethers.provider.getBlock(blockNum);
+        const now = block.timestamp;
+
+        timeToSubmitWork = now + SEVEN_DAYS
 
         projectContract = await projectContractFactory.deploy(
             creator.address,
@@ -126,7 +131,7 @@ describe("Project contract", function () {
         await ethers.provider.send('evm_mine')
 
         expect(await projectContract.currentBalance()).to.equal(200)
-        
+
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
@@ -147,20 +152,26 @@ describe("Project contract", function () {
 
         await projectContract.finishWork(workResult.title, workResult.description, workResult.url)
 
+        await ethers.provider.send('evm_increaseTime', [ONE_DAY])
+        await ethers.provider.send('evm_mine')
+
+        await expect(projectContract.withdraw())
+            .to.be.revertedWith('Project is not complete')
+
         await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
         await expect(projectContract.withdraw())
-            .to.be.revertedWith('Need to wait for 7 days in case any refund')
-
-        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
-        await ethers.provider.send('evm_mine')
+            .to.be.revertedWith('Project is not complete')
 
         await projectContract.connect(donator1).refund() // donator1 get refund 50%(50)
         expect(await projectContract.currentBalance()).to.equal(150)
 
         await projectContract.connect(donator2).refund() // donator2 get refund 50%(50)
         expect(await projectContract.currentBalance()).to.equal(100)
+
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_mine')
 
         // creator withdraw remaining
         await projectContract.withdraw()
@@ -181,9 +192,9 @@ describe("Project contract", function () {
         await ethers.provider.send('evm_mine')
 
         await expect(projectContract.withdraw())
-            .to.be.revertedWith('Need to wait for 7 days in case any refund')
+            .to.be.revertedWith('Project is not complete')
 
-        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS + 1])
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
         await ethers.provider.send('evm_mine')
 
         const nextNFTId = await projectContract.getNextNFTId()
@@ -218,16 +229,18 @@ describe("Project contract", function () {
         await ethers.provider.send('evm_mine')
 
         await expect(projectContract.withdraw())
-            .to.be.revertedWith('Need to wait for 7 days in case any refund')
+            .to.be.revertedWith('Project is not complete')
 
         const nextNFTId = await projectContract.getNextNFTId()
         expect(nextNFTId).to.equal(0)
 
         await projectContract.connect(donator1).claimNFT() // got 10 nft
         await expect(projectContract.connect(donator1).claimNFT())
-            .to.be.revertedWith('You have already claimed NFT')
+            .to.be.reverted
+            // .to.be.revertedWith('You have already claimed NFT')
         await expect(projectContract.connect(donator1).refund())
-            .to.be.revertedWith('You have already claimed NFT')
+            .to.be.reverted
+            // .to.be.revertedWith('You have already claimed NFT')
 
         const nextNFTId1 = await projectContract.getNextNFTId()
         expect(nextNFTId1).to.equal(10)
@@ -235,14 +248,19 @@ describe("Project contract", function () {
         await projectContract.connect(donator2).refund() // donator2 get refund 50%(50)
 
         await expect(projectContract.connect(donator1).claimNFT())
-            .to.be.revertedWith('You have already refunded')
+            .to.be.reverted
+            // .to.be.revertedWith('You have already refunded')
         await expect(projectContract.connect(donator1).refund())
-            .to.be.revertedWith('You have already refunded')
+            .to.be.reverted
+            // .to.be.revertedWith('You have already refunded')
 
         const nextNFTId2 = await projectContract.getNextNFTId()
         expect(nextNFTId2).to.equal(10)
 
         expect(await projectContract.currentBalance()).to.equal(150)
+
+        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_mine')
 
         // creator withdraw remaining
         await projectContract.withdraw()
