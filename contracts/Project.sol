@@ -46,12 +46,18 @@ contract Project is
         address payable _creator,
         string memory _title,
         string memory _description,
-        uint256 _timeToSubmitWork
+        uint256 _timeToSubmitWork,
+        uint256 _price,
+        uint256 _limit
+        // uint256 _reserved
     ) {
         creator = _creator;
         title = _title;
         description = _description;
         timeToSubmitWork = _timeToSubmitWork;
+        nftPrice = _price;
+        nftLimit = _limit;
+        // nftReserved = _reserved;
     }
 
     function initialize(
@@ -61,16 +67,6 @@ contract Project is
     ) public override initializer {
         super.initialize(_name, _symbol, _baseTokenURI);
         super.__ReentrancyGuard_init();
-    }
-
-    function setNFTInfo(
-        uint256 _price,
-        uint256 _limit
-        // uint256 _reserved
-    ) public {
-        nftPrice = _price;
-        nftLimit = _limit;
-        // nftReserved = _reserved;
     }
 
     function contribute(uint256 _nftAmountToBuy) external payable returns (bool) {

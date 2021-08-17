@@ -28,11 +28,26 @@ contract CrowdFunding {
     function startProject(
         string calldata title,
         string calldata description,
-        uint durationInDays
+        uint durationInDays,
+        string memory _name,
+        string memory _symbol,
+        string memory _baseTokenURI,
+        uint256 _price,
+        uint256 _limit
     ) external {
         uint raiseUntil = block.timestamp.add(durationInDays.mul(1 days));
-        Project newProject = new Project(payable(msg.sender), title, description, raiseUntil);
+        Project newProject = new Project(
+            payable(msg.sender),
+            title,
+            description,
+            raiseUntil,
+            _price,
+            _limit
+        );
         projects.push(newProject);
+
+        Project(newProject).initialize(_name, _symbol, _baseTokenURI);
+
         emit ProjectStarted(
             address(newProject),
             msg.sender,

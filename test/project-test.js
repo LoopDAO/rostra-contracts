@@ -42,7 +42,10 @@ describe("Project contract", function () {
             creator.address,
             title,
             description,
-            timeToSubmitWork
+            timeToSubmitWork,
+            nftInfo.price,
+            nftInfo.limit,
+            // nftInfo.reserved
         )
 
         expect(projectContract.address).to.not.be.null
@@ -51,12 +54,6 @@ describe("Project contract", function () {
             nftInfo.name,
             nftInfo.symbol,
             nftInfo.uri
-        )
-
-        await projectContract.setNFTInfo(
-            nftInfo.price,
-            nftInfo.limit,
-            // nftInfo.reserved
         )
     })
 
