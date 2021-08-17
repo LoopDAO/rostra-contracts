@@ -110,7 +110,7 @@ contract Project is
             isWorkSubmitted && block.timestamp >= timeToSubmitWork.add(gracePeriod),
             "Project is not complete"
         );
-        payable(msg.sender).send(currentBalance);
+        payable(msg.sender).transfer(currentBalance);
         currentBalance = 0;
         return true;
     }
@@ -140,7 +140,7 @@ contract Project is
         refunds[msg.sender] = true;
         currentBalance = currentBalance.sub(refundAmount);
         contributions[msg.sender] = contributions[msg.sender].sub(refundAmount);
-        payable(msg.sender).send(refundAmount);
+        payable(msg.sender).transfer(refundAmount);
         emit Refunded(msg.sender, refundAmount);
         return true;
     }
