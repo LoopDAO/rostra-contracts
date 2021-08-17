@@ -17,7 +17,13 @@ contract CrowdFunding {
         address projectStarter,
         string projectTitle,
         string projectDesc,
-        uint256 deadline
+        uint256 deadline,
+        uint256 _price,
+        uint256 _limit,
+        string _name,
+        string _symbol,
+        string _baseTokenURI
+
     );
 
     /** @dev Function to start a new project.
@@ -29,13 +35,13 @@ contract CrowdFunding {
         string calldata title,
         string calldata description,
         uint durationInDays,
+        uint256 _price,
+        uint256 _limit,
         string memory _name,
         string memory _symbol,
-        string memory _baseTokenURI,
-        uint256 _price,
-        uint256 _limit
+        string memory _baseTokenURI
     ) external {
-        uint raiseUntil = block.timestamp.add(durationInDays.mul(1 days));
+        uint raiseUntil = block.timestamp.add(durationInDays);
         Project newProject = new Project(
             payable(msg.sender),
             title,
@@ -53,7 +59,12 @@ contract CrowdFunding {
             msg.sender,
             title,
             description,
-            raiseUntil
+            raiseUntil,
+            _price,
+            _limit,
+            _name,
+            _symbol,
+            _baseTokenURI
         );
     }
 
@@ -63,6 +74,12 @@ contract CrowdFunding {
     function returnAllProjects() external view returns(Project[] memory){
         return projects;
     }
+
+    // todo
+    function setProjectGracePeriod(address _project, uint256 _gracePeriod) external {
+        Project(_project).setGracePeriod(_gracePeriod);
+    }
+
 }
 
 

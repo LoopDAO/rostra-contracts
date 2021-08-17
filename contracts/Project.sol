@@ -72,6 +72,7 @@ contract Project is
     function contribute(uint256 _nftAmountToBuy) external payable returns (bool) {
         require(msg.sender != creator, "You can't contribute to your own project");
         require(nftIdCounter.current() < nftLimit, "Sold out");
+        require(!refunds[msg.sender], "You have already refunded");
 
         uint256 _contributionAmount = _nftAmountToBuy * nftPrice;
         require(_contributionAmount == msg.value, "Token amount incorrect");
@@ -139,6 +140,10 @@ contract Project is
         payable(msg.sender).transfer(refundAmount);
         emit Refunded(msg.sender, refundAmount);
         return true;
+    }
+
+    function setGracePeriod(uint _gracePeriod) onlyOwner external {
+        gracePeriod = _gracePeriod;
     }
 
     function getNFTAddress() external view returns(address) {
