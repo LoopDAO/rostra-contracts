@@ -33,9 +33,11 @@ contract Project is
     uint256 public currentBalance;
     bool public isWorkSubmitted = false;
 
-    uint256 nftPrice;
-    uint256 nftLimit;
-    // uint256 nftReserved;
+    uint256 public nftSoldAmount;
+
+    uint256 public nftPrice;
+    uint256 public nftLimit;
+    // uint256 public nftReserved;
 
     mapping (address => uint256) public contributions;
     mapping (address => uint256) public nftAmounts;
@@ -71,13 +73,14 @@ contract Project is
 
     function contribute(uint256 _nftAmountToBuy) external payable returns (bool) {
         require(msg.sender != creator, "You can't contribute to your own project");
-        require(nftIdCounter.current() < nftLimit, "Sold out");
+        require(nftSoldAmount.add(_nftAmountToBuy) <= nftLimit, "Sold out");
         require(!refunds[msg.sender], "You have already refunded");
 
         uint256 _contributionAmount = _nftAmountToBuy * nftPrice;
         require(_contributionAmount == msg.value, "Token amount incorrect");
 
         currentBalance = currentBalance.add(msg.value);
+        nftSoldAmount = nftSoldAmount.add(_nftAmountToBuy);
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
         nftAmounts[msg.sender] = nftAmounts[msg.sender].add(_nftAmountToBuy);
 
