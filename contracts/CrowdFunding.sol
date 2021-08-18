@@ -68,6 +68,10 @@ contract CrowdFunding {
         );
     }
 
+    function getCurrentTime() external view returns(uint256) {
+        return block.timestamp;
+    }
+
     /** @dev Function to get all projects' contract addresses.
       * @return A list of all projects' contract addreses
       */
