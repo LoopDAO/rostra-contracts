@@ -29,19 +29,19 @@ contract CrowdFunding {
     /** @dev Function to start a new project.
       * @param title Title of the project to be created
       * @param description Brief description about the project
-      * @param durationInDays Project deadline in days
+      * @param durationInSeconds Project deadline in seconds
       */
     function startProject(
         string calldata title,
         string calldata description,
-        uint durationInDays,
+        uint durationInSeconds,
         uint256 _price,
         uint256 _limit,
         string memory _name,
         string memory _symbol,
         string memory _baseTokenURI
     ) external {
-        uint raiseUntil = block.timestamp.add(durationInDays);
+        uint raiseUntil = block.timestamp.add(durationInSeconds);
         Project newProject = new Project(
             payable(msg.sender),
             title,
