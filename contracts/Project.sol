@@ -140,6 +140,7 @@ contract Project is
         refunds[msg.sender] = true;
         currentBalance = currentBalance.sub(refundAmount);
         contributions[msg.sender] = contributions[msg.sender].sub(refundAmount);
+        nftAmounts[msg.sender] = 0;
         payable(msg.sender).transfer(refundAmount);
         emit Refunded(msg.sender, refundAmount);
         return true;
