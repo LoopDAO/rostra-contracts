@@ -78,12 +78,6 @@ contract CrowdFunding {
     function returnAllProjects() external view returns(Project[] memory){
         return projects;
     }
-
-    // todo
-    function setProjectGracePeriod(address _project, uint256 _gracePeriod) external {
-        Project(_project).setGracePeriod(_gracePeriod);
-    }
-
 }
 
 
