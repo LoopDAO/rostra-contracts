@@ -150,10 +150,6 @@ contract Project is
         gracePeriod = _gracePeriod;
     }
 
-    function getNFTAddress() external view returns(address) {
-        return address(this);
-    }
-
     function getNextNFTId() external view returns(uint256) {
         return nftIdCounter.current();
     }
