@@ -65,9 +65,6 @@ describe("Project contract", function () {
     })
 
     it('Buy 10 NFTs', async function () {
-        const nftContractAddress = await projectContract.getNFTAddress()
-        expect(nftContractAddress).is.not.null;
-
         const nftTotalBefore = await projectContract.getNextNFTId()
         expect(nftTotalBefore).to.equal(0)
 
