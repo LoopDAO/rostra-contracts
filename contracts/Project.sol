@@ -19,7 +19,7 @@ contract Project is
 
     CountersUpgradeable.Counter public nftIdCounter;
 
-    uint256 public gracePeriod = 7 days;
+    uint256 public gracePeriod = 1 days;
 
     address payable public creator;
     string public title;
