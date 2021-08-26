@@ -1,3 +1,4 @@
+require('@openzeppelin/hardhat-upgrades');
 require("@nomiclabs/hardhat-waffle");
 const fs = require("fs");
 require('dotenv').config()
