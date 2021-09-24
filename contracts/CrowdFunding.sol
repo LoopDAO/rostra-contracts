@@ -57,6 +57,8 @@ contract CrowdFunding {
 
         Project(newProject).initialize(_name, _symbol, _baseTokenURI);
 
+        newProject.transferOwnership(msg.sender);
+
         emit ProjectStarted(
             address(newProject),
             msg.sender,
