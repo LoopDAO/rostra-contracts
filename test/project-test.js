@@ -11,6 +11,7 @@ describe("Project contract", function () {
     const ONE_DAY = 24 * 60 * 60
     const SEVEN_DAYS = 7 * 24 * 60 * 60
 
+    const creatorName = "Alice"
     const title = "Research Uni V3"
     const description = "We will produce 3 videos"
     let timeToSubmitWork
@@ -39,6 +40,7 @@ describe("Project contract", function () {
         timeToSubmitWork = now + SEVEN_DAYS
 
         projectContract = await projectContractFactory.deploy(
+            creatorName,
             creator.address,
             title,
             description,
@@ -55,10 +57,13 @@ describe("Project contract", function () {
             nftInfo.symbol,
             nftInfo.uri
         )
+
+        await projectContract.setGracePeriod(SEVEN_DAYS)
     })
 
     it('Get project details', async function () {
         expect(await projectContract.creator()).to.equal(creator.address)
+        expect(await projectContract.creatorName()).to.equal(creatorName)
         expect(await projectContract.title()).to.equal(title)
         expect(await projectContract.description()).to.equal(description)
         expect(await projectContract.timeToSubmitWork()).to.equal(timeToSubmitWork)
@@ -164,7 +169,7 @@ describe("Project contract", function () {
         await projectContract.connect(donator2).refund() // donator2 get refund 50%(50)
         expect(await projectContract.currentBalance()).to.equal(100)
 
-        await ethers.provider.send('evm_increaseTime', [SEVEN_DAYS])
+        await ethers.provider.send('evm_increaseTime', [6 * ONE_DAY])
         await ethers.provider.send('evm_mine')
 
         // creator withdraw remaining
