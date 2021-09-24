@@ -65,6 +65,7 @@ describe("Project contract", function () {
         expect(await projectContract.title()).to.equal(title)
         expect(await projectContract.description()).to.equal(description)
         expect(await projectContract.timeToSubmitWork()).to.equal(timeToSubmitWork)
+        expect(await projectContract.owner()).to.equal(creator.address)
     })
 
     it('Buy 10 NFTs', async function () {
@@ -80,6 +81,9 @@ describe("Project contract", function () {
 
         const nftTotalAfter = await projectContract.getNextNFTId()
         expect(nftTotalAfter).to.equal(10)
+
+        const balance = await projectContract.balanceOf(donator1.address)
+        expect(balance).to.equal(10)
 
     })
 
