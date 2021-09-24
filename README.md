@@ -25,7 +25,7 @@ npx hardhat compile
 4. Test
 
 ```bash
-npx hardhat test
+yarn test
 ```
 
 5. Deploy
