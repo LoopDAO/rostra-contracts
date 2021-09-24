@@ -39,8 +39,6 @@ contract Project is
     // uint256 public nftReserved;
 
     mapping (address => uint256) public contributions;
-    mapping (address => uint256) public nftAmounts;
-    mapping (address => bool) public nftClaims;
 
     constructor(
         string memory _creatorName,
@@ -81,14 +79,13 @@ contract Project is
         currentBalance = currentBalance.add(msg.value);
         nftSoldAmount = nftSoldAmount.add(_nftAmountToBuy);
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
-        nftAmounts[msg.sender] = nftAmounts[msg.sender].add(_nftAmountToBuy);
 
-        _claimNFT(_nftAmountToBuy, msg.sender);
+        _claimNFT(msg.sender, _nftAmountToBuy);
 
         emit Contributed(msg.sender, _nftAmountToBuy, msg.value);
     }
 
-    function _claimNFT(uint256 _nftAmountToBuy, address _to) internal {
+    function _claimNFT(address _to, uint256 _nftAmountToBuy) internal {
         for (uint256 i = 0; i < _nftAmountToBuy; i++) {
             _safeMint(_to, nftIdCounter.current());
             nftIdCounter.increment();
