@@ -15,6 +15,7 @@ contract CrowdFunding {
     event ProjectStarted(
         address contractAddress,
         address projectStarter,
+        string creatorName,
         string projectTitle,
         string projectDesc,
         uint256 deadline,
@@ -32,8 +33,9 @@ contract CrowdFunding {
       * @param durationInSeconds Project deadline in seconds
       */
     function startProject(
-        string calldata title,
-        string calldata description,
+        string memory creatorName,
+        string memory title,
+        string memory description,
         uint durationInSeconds,
         uint256 _price,
         uint256 _limit,
@@ -43,6 +45,7 @@ contract CrowdFunding {
     ) external {
         uint raiseUntil = block.timestamp.add(durationInSeconds);
         Project newProject = new Project(
+            creatorName,
             payable(msg.sender),
             title,
             description,
@@ -57,6 +60,7 @@ contract CrowdFunding {
         emit ProjectStarted(
             address(newProject),
             msg.sender,
+            creatorName,
             title,
             description,
             raiseUntil,

@@ -22,6 +22,7 @@ contract Project is
     uint256 public gracePeriod = 1 days;
 
     address payable public creator;
+    string public creatorName;
     string public title;
     string public description;
     uint256 public timeToSubmitWork;
@@ -45,6 +46,7 @@ contract Project is
     mapping (address => bool) public refunds;
 
     constructor(
+        string memory _creatorName,
         address payable _creator,
         string memory _title,
         string memory _description,
@@ -54,6 +56,7 @@ contract Project is
         // uint256 _reserved
     ) {
         creator = _creator;
+        creatorName = _creatorName;
         title = _title;
         description = _description;
         timeToSubmitWork = _timeToSubmitWork;
