@@ -15,7 +15,7 @@ task("accounts", "Prints the list of accounts", async () => {
 
 function mnemonic() {
 
- return process.env.PRIVATE_KEY
+  return process.env.PRIVATE_KEY
 
 }
 
@@ -62,26 +62,40 @@ module.exports = {
         (you can put in a mnemonic here to set the deployer locally)
       */
     },
-    rinkeby: {
-      url: "https://rinkeby.infura.io/v3/" + process.env.INFURA_ID, //<---- YOUR INFURA ID! (or it won't work)
+    polygontestnet: {
+      url: "https://matic-testnet-archive-rpc.bwarelabs.com",
       accounts: [
-      mnemonic()
+        mnemonic()
+      ],
+      gasPrice: 8000000000,
+    },
+    polygon: {
+      url: "https://polygon-rpc.com/",
+      accounts: [
+        mnemonic()
+      ],
+      gasPrice: 8000000000,
+    },
+    rinkeby: {
+      url: "https://rinkeby.infura.io/v3/" + process.env.INFURA_ID,
+      accounts: [
+        mnemonic()
       ],
     },
     kovan: {
-      url: "https://kovan.infura.io/v3/" + process.env.INFURA_ID, //<---- YOUR INFURA ID! (or it won't work)
+      url: "https://kovan.infura.io/v3/" + process.env.INFURA_ID,
       accounts: [
         mnemonic()
       ],
     },
     mainnet: {
-      url: "https://mainnet.infura.io/v3/" + process.env.INFURA_ID, //<---- YOUR INFURA ID! (or it won't work)
+      url: "https://mainnet.infura.io/v3/" + process.env.INFURA_ID,
       accounts: [
         mnemonic()
       ],
     },
     ropsten: {
-      url: "https://ropsten.infura.io/v3/" + process.env.INFURA_ID, //<---- YOUR INFURA ID! (or it won't work)
+      url: "https://ropsten.infura.io/v3/" + process.env.INFURA_ID,
       accounts: [
         mnemonic()
       ],
