@@ -19,8 +19,6 @@ contract Project is
 
     CountersUpgradeable.Counter public nftIdCounter;
 
-    uint256 public gracePeriod = 1 days;
-
     address payable public creator;
     string public creatorName;
     string public title;
@@ -43,7 +41,6 @@ contract Project is
     mapping (address => uint256) public contributions;
     mapping (address => uint256) public nftAmounts;
     mapping (address => bool) public nftClaims;
-    mapping (address => bool) public refunds;
 
     constructor(
         string memory _creatorName,
@@ -74,10 +71,9 @@ contract Project is
         super.__ReentrancyGuard_init();
     }
 
-    function contribute(uint256 _nftAmountToBuy) external payable returns (bool) {
+    function contribute(uint256 _nftAmountToBuy) external payable {
         require(msg.sender != creator, "You can't contribute to your own project");
         require(nftSoldAmount.add(_nftAmountToBuy) <= nftLimit, "Sold out");
-        require(!refunds[msg.sender], "You have already refunded");
 
         uint256 _contributionAmount = _nftAmountToBuy * nftPrice;
         require(_contributionAmount == msg.value, "Token amount incorrect");
@@ -87,42 +83,33 @@ contract Project is
         contributions[msg.sender] = contributions[msg.sender].add(msg.value);
         nftAmounts[msg.sender] = nftAmounts[msg.sender].add(_nftAmountToBuy);
 
+        _claimNFT(_nftAmountToBuy, msg.sender);
+
         emit Contributed(msg.sender, _nftAmountToBuy, msg.value);
-        return true;
     }
 
-    function claimNFT() external payable returns (bool) {
-        require(block.timestamp >= timeToSubmitWork, "Project is not complete");
-        require(!refunds[msg.sender], "You have already refunded");
-        require(!nftClaims[msg.sender], "You have already claimed NFT");
-
-        nftClaims[msg.sender] = true;
-
-        for (uint256 i = 0; i < nftAmounts[msg.sender]; i++) {
-            _safeMint(msg.sender, nftIdCounter.current());
+    function _claimNFT(uint256 _nftAmountToBuy, address _to) internal {
+        for (uint256 i = 0; i < _nftAmountToBuy; i++) {
+            _safeMint(_to, nftIdCounter.current());
             nftIdCounter.increment();
         }
-
-        return true;
     }
 
-    function withdraw() external returns (bool) {
+    function withdraw() external {
         require(msg.sender == creator, "You must be the project creator to withdraw");
-        // require(isWorkSubmitted, "You must submit work before you can withdraw");
-        require(
-            isWorkSubmitted && block.timestamp >= timeToSubmitWork.add(gracePeriod),
-            "Project is not complete"
-        );
-        payable(msg.sender).transfer(currentBalance);
+
+        uint256 withdrawalAmount = address(this).balance;
+
+        payable(msg.sender).transfer(withdrawalAmount);
         currentBalance = 0;
-        return true;
+        emit Withdrawn(msg.sender, withdrawalAmount);
     }
 
     function finishWork(string memory _title, string memory _description, string memory _url)
         external returns (bool)
     {
         require(msg.sender == creator, "Only creator");
-        require(!isWorkSubmitted && block.timestamp < timeToSubmitWork, "Too late");
+
         isWorkSubmitted = true;
         workTitle = _title;
         workDescription = _description;
@@ -130,33 +117,10 @@ contract Project is
         return true;
     }
 
-    function refund() external nonReentrant returns (bool) {
-        require(block.timestamp >= timeToSubmitWork, "Project is not complete");
-        // require(!isWorkSubmitted, "Can not refund due to creator already submitted the work");
-        require(!refunds[msg.sender], "You have already refunded");
-        require(!nftClaims[msg.sender], "You have already claimed NFT");
-
-        uint256 refundAmount = contributions[msg.sender];
-        if (isWorkSubmitted) {
-            refundAmount = contributions[msg.sender].div(2);
-        }
-        refunds[msg.sender] = true;
-        currentBalance = currentBalance.sub(refundAmount);
-        contributions[msg.sender] = contributions[msg.sender].sub(refundAmount);
-        nftAmounts[msg.sender] = 0;
-        payable(msg.sender).transfer(refundAmount);
-        emit Refunded(msg.sender, refundAmount);
-        return true;
-    }
-
-    function setGracePeriod(uint _gracePeriod) onlyOwner external {
-        gracePeriod = _gracePeriod;
-    }
-
     function getNextNFTId() external view returns(uint256) {
         return nftIdCounter.current();
     }
 
     event Contributed(address indexed _contributor, uint256 _nftAmount, uint256 _tokenAmount);
-    event Refunded(address indexed _contributor, uint256 _tokenAmount);
+    event Withdrawn(address indexed withdrawer, uint256 withdrawalAmount);
 }
