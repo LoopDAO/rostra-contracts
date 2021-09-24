@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test test/*",
-    "deploy": "npx hardhat run scripts/deploy_crowdfunding.js --network polygontestnet"
+    "deploy-testnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygontestnet",
+    "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon"
   },
   "keywords": [],
   "author": "",
