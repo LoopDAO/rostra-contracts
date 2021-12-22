@@ -15,6 +15,7 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
+  const CrowdFundingContract = await ethers.getContractFactory("CrowdFunding");
   //deploy Crowdfunding
   const result = await upgrades.deployProxy(CrowdFundingContract);
 
