@@ -39,7 +39,9 @@ describe("Project contract", function () {
 
     timeToSubmitWork = now + SEVEN_DAYS
 
-    projectContract = await projectContractFactory.deploy(
+    projectContract = await projectContractFactory.deploy()
+
+    await projectContract.init(
       creatorName,
       creator.address,
       title,
@@ -47,16 +49,13 @@ describe("Project contract", function () {
       timeToSubmitWork,
       nftInfo.price,
       nftInfo.limit,
-      // nftInfo.reserved
-    )
-
-    expect(projectContract.address).to.not.be.null
-
-    await projectContract.initialize(
+      // nftInfo.reserved,
       nftInfo.name,
       nftInfo.symbol,
       nftInfo.uri
     )
+
+    expect(projectContract.address).to.not.be.null
   })
 
   it('Get project details', async function () {

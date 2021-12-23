@@ -7,19 +7,19 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
-import "./SafeMath.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "./ERC721Base.sol";
 
 contract Project is
     ERC721Base,
     ReentrancyGuardUpgradeable
 {
-    using SafeMath for uint256;
+    using SafeMathUpgradeable for uint256;
     using CountersUpgradeable for CountersUpgradeable.Counter;
 
     CountersUpgradeable.Counter public nftIdCounter;
 
-    address payable public creator;
+    address public creator;
     string public creatorName;
     string public title;
     string public description;
@@ -40,16 +40,19 @@ contract Project is
 
     mapping (address => uint256) public contributions;
 
-    constructor(
+    function initialize(
         string memory _creatorName,
-        address payable _creator,
+        address _creator,
         string memory _title,
         string memory _description,
         uint256 _timeToSubmitWork,
         uint256 _price,
-        uint256 _limit
-        // uint256 _reserved
-    ) {
+        uint256 _limit,
+        // uint256 _reserved,
+        string memory _name,
+        string memory _symbol,
+        string memory _baseTokenURI
+    ) public initializer {
         creator = _creator;
         creatorName = _creatorName;
         title = _title;
@@ -58,13 +61,7 @@ contract Project is
         nftPrice = _price;
         nftLimit = _limit;
         // nftReserved = _reserved;
-    }
 
-    function initialize(
-        string memory _name,
-        string memory _symbol,
-        string memory _baseTokenURI
-    ) public override initializer {
         super.initialize(_name, _symbol, _baseTokenURI);
         super.__ReentrancyGuard_init();
     }
