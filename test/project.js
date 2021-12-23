@@ -2,6 +2,7 @@ const { expect } = require("chai")
 const { ethers } = require('hardhat')
 
 describe("Project contract", function () {
+  let crowdFundingContract;
   let projectContractFactory
   let projectContract
   let creator
@@ -31,6 +32,9 @@ describe("Project contract", function () {
   }
   beforeEach(async function () {
     [creator, donator1, donator2] = await ethers.getSigners()
+    const crowdFundingContractFactory = await ethers.getContractFactory("CrowdFunding");
+    crowdFundingContract = await crowdFundingContractFactory.deploy();
+
     projectContractFactory = await ethers.getContractFactory("Project")
 
     const blockNum = await ethers.provider.getBlockNumber();
@@ -39,23 +43,25 @@ describe("Project contract", function () {
 
     timeToSubmitWork = now + SEVEN_DAYS
 
-    projectContract = await projectContractFactory.deploy()
 
-    await projectContract.init(
+    await crowdFundingContract.startProject(
       creatorName,
-      creator.address,
       title,
       description,
       timeToSubmitWork,
       nftInfo.price,
       nftInfo.limit,
-      // nftInfo.reserved,
       nftInfo.name,
       nftInfo.symbol,
       nftInfo.uri
+      // nftInfo.reserved
     )
+    const projects = await crowdFundingContract.returnAllProjects()
 
-    expect(projectContract.address).to.not.be.null
+    expect(projects.length).to.equal(1);
+
+    projectContract = await ethers.getContractAt("Project", projects[0])
+
   })
 
   it('Get project details', async function () {
@@ -64,7 +70,7 @@ describe("Project contract", function () {
     expect(await projectContract.title()).to.equal(title)
     expect(await projectContract.description()).to.equal(description)
     expect(await projectContract.timeToSubmitWork()).to.equal(timeToSubmitWork)
-    expect(await projectContract.owner()).to.equal(creator.address)
+    expect(await projectContract.owner()).to.equal(crowdFundingContract.address)
   })
 
   it('Buy 10 NFTs', async function () {
