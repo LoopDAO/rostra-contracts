@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "compile": "npx hardhat compile",
     "test": "npx hardhat test test/*",
     "deploy-testnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygontestnet",
     "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon"
