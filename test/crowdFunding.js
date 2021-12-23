@@ -7,6 +7,7 @@ describe("CrowdFunding contract", function () {
   const creatorName = "Alice"
   const title = "Research Uni V3"
   const description = "We will produce 3 videos"
+  const paperURL = "ipfs://my-paper-url"
   let timeToSubmitWork
   const workResult = {
     title: 'Uni V3 analysis video',
@@ -64,11 +65,11 @@ describe("CrowdFunding contract", function () {
       nftInfo.name,
       nftInfo.symbol,
       nftInfo.uri,
-      nftInfo.reserved
+      paperURL
     )
-    let paperMiningAmount = await crowdFundingContract.paperMiningAmount()
+    let paperAmount = await crowdFundingContract.paperAmount()
 
-    expect(paperMiningAmount).to.equal(1);
+    expect(paperAmount).to.equal(1);
   });
 });
 
