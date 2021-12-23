@@ -72,6 +72,52 @@ contract CrowdFunding {
         );
     }
 
+    /** @dev Function to start a new project.
+      * @param title Title of the project to be created
+      * @param description Brief description about the project
+      */
+    function startPaperMining(
+        string memory creatorName,
+        string memory title,
+        string memory description,
+        uint256 _price,
+        uint256 _limit,
+        string memory _name,
+        string memory _symbol,
+        string memory _baseTokenURI,
+        uint256 reserved
+    ) external {
+
+        // uint raiseUntil = block.timestamp.add(durationInSeconds);
+        // Project newProject = new Project(
+        //     creatorName,
+        //     payable(msg.sender),
+        //     title,
+        //     description,
+        //     raiseUntil,
+        //     _price,
+        //     _limit
+        // );
+        // projects.push(newProject);
+
+        // Project(newProject).initialize(_name, _symbol, _baseTokenURI);
+
+        // emit ProjectStarted(
+        //     address(newProject),
+        //     msg.sender,
+        //     creatorName,
+        //     title,
+        //     description,
+        //     raiseUntil,
+        //     _price,
+        //     _limit,
+        //     _name,
+        //     _symbol,
+        //     _baseTokenURI
+        // );
+    }
+
+
     function getCurrentTime() external view returns(uint256) {
         return block.timestamp;
     }
@@ -81,6 +127,13 @@ contract CrowdFunding {
       */
     function returnAllProjects() external view returns(Project[] memory){
         return projects;
+    }
+
+    /** @dev Function to get paper mining's amount.
+      * @return Number of paper mining
+      */
+    function paperMiningAmount() external view returns(uint256){
+        return 1;
     }
 }
 
