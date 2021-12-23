@@ -66,6 +66,33 @@ contract Project is
         super.__ReentrancyGuard_init();
     }
 
+    function init(
+        string memory _creatorName,
+        address _creator,
+        string memory _title,
+        string memory _description,
+        uint256 _timeToSubmitWork,
+        uint256 _price,
+        uint256 _limit,
+        // uint256 _reserved,
+        string memory _name,
+        string memory _symbol,
+        string memory _baseTokenURI
+    ) public initializer {
+        initialize(
+            _creatorName,
+            _creator,
+            _title,
+            _description,
+            _timeToSubmitWork,
+            _price,
+            _limit,
+            _name,
+            _symbol,
+            _baseTokenURI
+        );
+    }
+
     function contribute(uint256 _nftAmountToBuy) external payable {
         require(msg.sender != creator, "You can't contribute to your own project");
         require(nftSoldAmount.add(_nftAmountToBuy) <= nftLimit, "Sold out");

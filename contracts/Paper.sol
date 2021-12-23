@@ -57,6 +57,32 @@ contract Paper is
         super.__ReentrancyGuard_init();
     }
 
+    function init(
+        string memory _creatorName,
+        address _creator,
+        string memory _title,
+        string memory _description,
+        uint256 _price,
+        uint256 _limit,
+        string memory _name,
+        string memory _symbol,
+        string memory _baseTokenURI,
+        string memory _paperURL
+    ) public initializer {
+        initialize(
+            _creatorName,
+            _creator,
+            _title,
+            _description,
+            _price,
+            _limit,
+            _name,
+            _symbol,
+            _baseTokenURI,
+            _paperURL
+        );
+    }
+
     function contribute(uint256 _nftAmountToBuy) external payable {
         require(msg.sender != creator, "You can't contribute to your own project");
         require(nftSoldAmount.add(_nftAmountToBuy) <= nftLimit, "Sold out");

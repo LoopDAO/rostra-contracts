@@ -42,7 +42,7 @@ contract CrowdFunding {
 
         Project newProject = new Project{salt: keccak256(abi.encode(msg.sender, projectAmount))}();
 
-        Project(newProject).initialize(
+        Project(newProject).init(
             _creatorName,
             msg.sender,
             _title,
@@ -90,7 +90,7 @@ contract CrowdFunding {
 
         Paper newPaper = new Paper{salt: keccak256(abi.encode(msg.sender, paperAmount))}();
 
-        Paper(newPaper).initialize(
+        Paper(newPaper).init(
             _creatorName,
             msg.sender,
             _title,

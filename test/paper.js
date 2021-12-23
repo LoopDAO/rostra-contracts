@@ -39,7 +39,6 @@ describe("Paper contract", function () {
       nftInfo.symbol,
       nftInfo.uri,
       paperURL
-      // nftInfo.reserved
     )
     const papers = await crowdFundingContract.returnAllPapers()
 
