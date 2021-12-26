@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test test/*",
+    "testsvg": "npx hardhat test test/svg.js",
     "deploy-testnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygontestnet",
     "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon"
   },
@@ -16,8 +17,10 @@
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/contracts-upgradeable": "^4.2.0",
     "@openzeppelin/hardhat-upgrades": "^1.10.0",
+    "base64-sol": "1.0.1",
     "dotenv": "^10.0.0",
-    "hardhat": "^2.4.1"
+    "hardhat": "^2.4.1",
+    "is-svg": "^4.3.2"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",

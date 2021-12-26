@@ -48,7 +48,7 @@ describe("Paper contract", function () {
 
   })
 
-  it('Get project details', async function () {
+  it('Get paper details', async function () {
     expect(await paperContract.creator()).to.equal(creator.address)
     expect(await paperContract.creatorName()).to.equal(creatorName)
     expect(await paperContract.title()).to.equal(title)

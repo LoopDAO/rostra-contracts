@@ -54,6 +54,11 @@ module.exports = {
       blockGasLimit: 0x1fffffffffffff,
       allowUnlimitedContractSize: true
     },
+    local: {
+      url: "http://localhost:7545",
+      //gas: 125000000000, // i cannot assign more gas above gas limit of ganache... is it possible to increase this limit.... ?
+      //gasPrice: 125000000000
+    },
     localhost: {
       url: "http://localhost:8545",
       //gasPrice: 125000000000,//you can adjust gasPrice locally to see how much it will cost on production

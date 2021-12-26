@@ -26,10 +26,11 @@ npx hardhat compile
 
 ```bash
 yarn test
+yarn svgtest
 ```
 
 5. Deploy
 
 ```bash
-npx hardhat run scripts/deploy_crowdfunding.js --network <network_name>
+npx hardhat run scripts/deployCrowdfunding.js --network <network_name>
 ```
