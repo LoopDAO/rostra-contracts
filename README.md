@@ -26,7 +26,7 @@ npx hardhat compile
 
 ```bash
 yarn test
-yarn svgtest
+yarn testsvg
 ```
 
 5. Deploy
