@@ -18,7 +18,7 @@ contract ERC1155Controller is
     /// @notice Emitted when the ERC1155Controller is initialized
     event ERC1155ControllerInitialized(address controller);
 
-    /// @dev The address of the SeriesController contract which will be allowed to call
+    /// @dev The address of the Controller contract which will be allowed to call
     /// the mint* and burn* functions
     address internal controller;
 
@@ -26,13 +26,31 @@ contract ERC1155Controller is
     /// so we must store that ourselves
     mapping(uint256 => uint256) public tokenTotalSupplies;
 
+    /// @notice Perform inherited contracts' initializations
+    function __ERC1155Controller_init(
+        string memory _uri,
+        address _controller
+    ) external initializer {
+        __ERC1155PresetMinterPauser_init(_uri);
+
+        _setupRole(MINTER_ROLE, _controller);
+
+        controller = _controller;
+
+        // only the Controller should be allowed to mint
+        // todo
+        renounceRole(MINTER_ROLE, msg.sender);
+
+        emit ERC1155ControllerInitialized(_controller);
+    }
+
     ///////////////////// MODIFIER FUNCTIONS /////////////////////
 
-    /// @notice Check if the msg.sender is the privileged SeriesController contract address
+    /// @notice Check if the msg.sender is the privileged Controller contract address
     modifier onlyController() {
         require(
             msg.sender == controller,
-            "ERC1155Controller: Sender must be the seriesController"
+            "ERC1155Controller: Sender must be the Controller"
         );
 
         _;
@@ -48,58 +66,11 @@ contract ERC1155Controller is
         _;
     }
 
-    ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
-
-    /// @notice Returns the total supply for the given ERC1155 ID
-    /// @param id The ERC1155 ID
-    /// @return The total supply
-    function optionTokenTotalSupply(uint256 id)
-        external
-        view
-        override
-        returns (uint256)
-    {
-        return tokenTotalSupplies[id];
-    }
-
-    /// @notice Returns the total supply for multiple ERC1155 ID
-    /// @param ids The ERC1155 IDs
-    /// @return The total supplys for each ID
-    function optionTokenTotalSupplyBatch(uint256[] memory ids)
-        external
-        view
-        override
-        returns (uint256[] memory)
-    {
-        uint256[] memory totalSupplies = new uint256[](ids.length);
-        for (uint256 i = 0; i < ids.length; i++) {
-            totalSupplies[i] = tokenTotalSupplies[ids[i]];
-        }
-        return totalSupplies;
-    }
-
     ///////////////////// MUTATING FUNCTIONS /////////////////////
-
-    /// @notice Perform inherited contracts' initializations
-    function __ERC1155Controller_init(
-        string memory _uri,
-        address _seriesController
-    ) external initializer {
-        __ERC1155PresetMinterPauser_init(_uri);
-
-        _setupRole(MINTER_ROLE, _seriesController);
-
-        controller = _seriesController;
-
-        // only the SeriesController should be allowed to mint
-        renounceRole(MINTER_ROLE, msg.sender);
-
-        emit ERC1155ControllerInitialized(_seriesController);
-    }
 
     /// @notice mint the specified amount of ERC1155 token and send to the given to address
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
-    /// and add a total supply variable for each option token
+    /// and add a total supply variable for each token
     /// @param to the address which will receive the minted token
     /// @param id the ERC1155 token to mint
     /// @param amount the amount of token to mint
@@ -122,9 +93,9 @@ contract ERC1155Controller is
         tokenTotalSupplies[id] += amount;
     }
 
-    /// @notice mint the specified amounts of ERC1155 tokens and sends them to the given to address
+    /// @notice mint the specified amounts of ERC1155 tokens and sends them to the given address
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
-    /// and add a total supply variable for each option token
+    /// and add a total supply variable for each token
     /// @param to the address which will receive the minted token
     /// @param ids the ERC1155 tokens to mint
     /// @param amounts the amounts of token to mint
@@ -151,7 +122,7 @@ contract ERC1155Controller is
 
     /// @notice burn the specified amount of ERC1155 token
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
-    /// and add a total supply variable for each option token
+    /// and add a total supply variable for each token
     /// @param account the address for which to burn tokens
     /// @param id the ERC1155 token to burn
     /// @param amount the amount of token to burn
@@ -174,7 +145,7 @@ contract ERC1155Controller is
 
     /// @notice burn the specified amounts of ERC1155 tokens
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
-    /// and add a total supply variable for each option token
+    /// and add a total supply variable for each token
     /// @param account the address for which to burn tokens
     /// @param ids the ERC1155 tokens to burn
     /// @param amounts the amounts of token to burn
@@ -229,5 +200,35 @@ contract ERC1155Controller is
         // now remove the current admin from the admin role, leaving only
         // _newAdmin as the sole admin
         renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
+
+    ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
+
+    /// @notice Returns the total supply for the given ERC1155 ID
+    /// @param id The ERC1155 ID
+    /// @return The total supply
+    function tokenTotalSupply(uint256 id)
+        external
+        view
+        override
+        returns (uint256)
+    {
+        return tokenTotalSupplies[id];
+    }
+
+    /// @notice Returns the total supply for multiple ERC1155 ID
+    /// @param ids The ERC1155 IDs
+    /// @return The total supplys for each ID
+    function tokenTotalSupplyBatch(uint256[] memory ids)
+        external
+        view
+        override
+        returns (uint256[] memory)
+    {
+        uint256[] memory totalSupplies = new uint256[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            totalSupplies[i] = tokenTotalSupplies[ids[i]];
+        }
+        return totalSupplies;
     }
 }
