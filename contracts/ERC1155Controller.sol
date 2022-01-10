@@ -1,10 +1,9 @@
-// SPDX-License-Identifier: GPL-3.0-only
-
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol";
 import "./IERC1155Controller.sol";
-import "../proxy/Proxiable.sol";
+import "./proxy/Proxiable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol";
 
 /// @title ERC1155Controller
 /// @notice A contract for encapsulating all logic
@@ -36,10 +35,6 @@ contract ERC1155Controller is
         _setupRole(MINTER_ROLE, _controller);
 
         controller = _controller;
-
-        // only the Controller should be allowed to mint
-        // todo
-        renounceRole(MINTER_ROLE, msg.sender);
 
         emit ERC1155ControllerInitialized(_controller);
     }
@@ -120,6 +115,32 @@ contract ERC1155Controller is
         }
     }
 
+    /// @notice mint the specified amounts of ERC1155 tokens and sends them to the given addresses
+    /// @dev This function is overriden only in order to enforce the `onlyController` modifer
+    /// and add a total supply variable for each token
+    /// @param tos the addresses which will receive the minted token
+    /// @param ids the ERC1155 tokens to mint
+    /// @param amounts the amounts of token to mint
+    /// @param data unspecified data, for now this should not be used
+    function mintBatchAddresses(
+        address[] memory tos,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    )
+        public
+        onlyController
+    {
+
+        // ERC1155PresetMinterPauserUpgradeable doesn't have the concept of
+        // totalSupply onchain so we must store and increment that ourselves
+        for (uint256 i = 0; i < ids.length; i++) {
+            tokenTotalSupplies[ids[i]] += amounts[i];
+            // user ERC1155PresetMinterPauserUpgradeable's mint
+            super.mint(tos[i], ids[i], amounts[i], data);
+        }
+    }
+
     /// @notice burn the specified amount of ERC1155 token
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
     /// and add a total supply variable for each token
@@ -186,6 +207,9 @@ contract ERC1155Controller is
             _newAdmin != msg.sender,
             "ERC1155Controller: cannot transfer ownership to existing owner"
         );
+
+        // grant minter role to new admin
+        grantRole(MINTER_ROLE, _newAdmin);
 
         // first make _newAdmin the a pauser
         grantRole(PAUSER_ROLE, _newAdmin);

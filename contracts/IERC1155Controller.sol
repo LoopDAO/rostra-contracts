@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.0;
+pragma solidity 0.8.4;
 
 /// @title IERC1155Controller
 /// @notice A contract used by the Controller to perform ERC1155 functions (inherited
