@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "./IERC1155Controller.sol";
+import "./IERC1155Proxy.sol";
 import "./proxy/Proxiable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol";
 
-/// @title ERC1155Controller
+/// @title ERC1155Proxy
 /// @notice A contract for encapsulating all logic
 /// @notice This contract can be paused/unpaused by the admin
 /// @dev The controller is the only contract that can mint and burn tokens
-contract ERC1155Controller is
-    IERC1155Controller,
+contract ERC1155Proxy is
+    IERC1155Proxy,
     Proxiable,
     ERC1155PresetMinterPauserUpgradeable
 {
-    /// @notice Emitted when the ERC1155Controller is initialized
-    event ERC1155ControllerInitialized(address controller);
+    /// @notice Emitted when the ERC1155Proxy is initialized
+    event ERC1155ProxyInitialized(address controller);
 
     /// @dev The address of the Controller contract which will be allowed to call
     /// the mint* and burn* functions
@@ -26,7 +26,7 @@ contract ERC1155Controller is
     mapping(uint256 => uint256) public tokenTotalSupplies;
 
     /// @notice Perform inherited contracts' initializations
-    function __ERC1155Controller_init(
+    function __ERC1155Proxy_init(
         string memory _uri,
         address _controller
     ) external initializer {
@@ -36,7 +36,7 @@ contract ERC1155Controller is
 
         controller = _controller;
 
-        emit ERC1155ControllerInitialized(_controller);
+        emit ERC1155ProxyInitialized(_controller);
     }
 
     ///////////////////// MODIFIER FUNCTIONS /////////////////////
@@ -45,7 +45,7 @@ contract ERC1155Controller is
     modifier onlyController() {
         require(
             msg.sender == controller,
-            "ERC1155Controller: Sender must be the Controller"
+            "ERC1155Proxy: Sender must be the Controller"
         );
 
         _;
@@ -55,7 +55,7 @@ contract ERC1155Controller is
     modifier onlyOwner() {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
-            "ERC1155Controller: Caller is not the owner"
+            "ERC1155Proxy: Caller is not the owner"
         );
 
         _;
@@ -77,7 +77,7 @@ contract ERC1155Controller is
         bytes memory data
     )
         public
-        override(ERC1155PresetMinterPauserUpgradeable, IERC1155Controller)
+        override(ERC1155PresetMinterPauserUpgradeable, IERC1155Proxy)
         onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's mint
@@ -102,7 +102,7 @@ contract ERC1155Controller is
         bytes memory data
     )
         public
-        override(ERC1155PresetMinterPauserUpgradeable, IERC1155Controller)
+        override(ERC1155PresetMinterPauserUpgradeable, IERC1155Proxy)
         onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's mintBatch
@@ -153,7 +153,7 @@ contract ERC1155Controller is
         uint256 amount
     )
         public
-        override(ERC1155BurnableUpgradeable, IERC1155Controller)
+        override(ERC1155BurnableUpgradeable, IERC1155Proxy)
         onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's mint
@@ -176,7 +176,7 @@ contract ERC1155Controller is
         uint256[] memory amounts
     )
         public
-        override(ERC1155BurnableUpgradeable, IERC1155Controller)
+        override(ERC1155BurnableUpgradeable, IERC1155Proxy)
         onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's burnBatch
@@ -205,7 +205,7 @@ contract ERC1155Controller is
     function transferOwnership(address _newAdmin) external onlyOwner {
         require(
             _newAdmin != msg.sender,
-            "ERC1155Controller: cannot transfer ownership to existing owner"
+            "ERC1155Proxy: cannot transfer ownership to existing owner"
         );
 
         // grant minter role to new admin

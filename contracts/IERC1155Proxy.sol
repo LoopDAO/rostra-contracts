@@ -2,13 +2,13 @@
 
 pragma solidity 0.8.4;
 
-/// @title IERC1155Controller
+/// @title IERC1155Proxy
 /// @notice A contract used by the Controller to perform ERC1155 functions (inherited
 /// from the OpenZeppelin ERC1155PresetMinterPauserUpgradeable contract)
 /// @dev All ERC1155 tokens minted by this contract are stored on SeriesVault
 /// @dev This contract exists solely to decrease the size of the deployed SeriesController
 /// bytecode so it can be lower than the Spurious Dragon bytecode size limit
-interface IERC1155Controller {
+interface IERC1155Proxy {
     function tokenTotalSupply(uint256 id) external view returns (uint256);
 
     function tokenTotalSupplyBatch(uint256[] memory ids)
