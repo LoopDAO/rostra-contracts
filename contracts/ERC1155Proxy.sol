@@ -32,9 +32,11 @@ contract ERC1155Proxy is
     ) external initializer {
         __ERC1155PresetMinterPauser_init(_uri);
 
-        _setupRole(MINTER_ROLE, _controller);
-
         controller = _controller;
+
+        // only the Controller should be allowed to mint
+        renounceRole(MINTER_ROLE, msg.sender);
+        _setupRole(MINTER_ROLE, _controller);
 
         emit ERC1155ProxyInitialized(_controller);
     }
