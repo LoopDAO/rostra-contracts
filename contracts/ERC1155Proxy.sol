@@ -2,7 +2,6 @@
 pragma solidity 0.8.4;
 
 import "./IERC1155Proxy.sol";
-import "./proxy/Proxiable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol";
 
 /// @title ERC1155Proxy
@@ -11,7 +10,6 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetM
 /// @dev The controller is the only contract that can mint and burn tokens
 contract ERC1155Proxy is
     IERC1155Proxy,
-    Proxiable,
     ERC1155PresetMinterPauserUpgradeable
 {
     /// @notice Emitted when the ERC1155Proxy is initialized
@@ -195,16 +193,6 @@ contract ERC1155Proxy is
         for (uint256 i = 0; i < ids.length; i++) {
             tokenTotalSupplies[ids[i]] -= amounts[i];
         }
-    }
-
-    /// @notice update the logic contract for this proxy contract
-    /// @param _newImplementation the address of the new ERC115controller implementation
-    /// @dev only the admin address may call this function
-    function updateImplementation(address _newImplementation)
-        external
-        onlyOwner
-    {
-        _updateCodeAddress(_newImplementation);
     }
 
     /// @notice transfer the DEFAULT_ADMIN_ROLE and PAUSER_ROLE from the msg.sender to a new address
