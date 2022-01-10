@@ -25,11 +25,17 @@ contract ERC1155Proxy is
     /// so we must store that ourselves
     mapping(uint256 => uint256) public tokenTotalSupplies;
 
+    function initialize(
+        string memory _uri
+    ) public virtual override initializer {
+        __ERC1155Proxy_init(_uri, msg.sender);
+    }
+
     /// @notice Perform inherited contracts' initializations
     function __ERC1155Proxy_init(
         string memory _uri,
         address _controller
-    ) external initializer {
+    ) internal initializer {
         __ERC1155PresetMinterPauser_init(_uri);
 
         controller = _controller;
