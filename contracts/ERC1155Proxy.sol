@@ -160,7 +160,6 @@ contract ERC1155Proxy is
     )
         public
         override(ERC1155BurnableUpgradeable, IERC1155Proxy)
-        onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's mint
         super.burn(account, id, amount);
@@ -183,7 +182,6 @@ contract ERC1155Proxy is
     )
         public
         override(ERC1155BurnableUpgradeable, IERC1155Proxy)
-        onlyController
     {
         // user ERC1155PresetMinterPauserUpgradeable's burnBatch
         super.burnBatch(account, ids, amounts);
