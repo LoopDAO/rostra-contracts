@@ -23,6 +23,8 @@ contract ERC1155Proxy is
     /// so we must store that ourselves
     mapping(uint256 => uint256) public tokenTotalSupplies;
 
+    mapping (uint256 => string) private _uris;
+
     function initialize(
         string memory _uri
     ) public virtual override initializer {
@@ -220,7 +222,20 @@ contract ERC1155Proxy is
         renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
+    /// @notice Sets `_tokenURI` as the tokenURI of `tokenId`.
+    /// @param id The ERC1155 ID
+    function setTokenURI(uint256 id, string memory uri) public onlyOwner {
+        _uris[id] = uri;
+    }
+
     ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
+
+    /// @notice Returns the uri for the given ERC1155 ID
+    /// @param id The ERC1155 ID
+    /// @return The uri for the given ERC1155 ID
+    function uri(uint256 id) override external view returns (string memory) {
+        return(_uris[id]);
+    }
 
     /// @notice Returns the total supply for the given ERC1155 ID
     /// @param id The ERC1155 ID
