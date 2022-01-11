@@ -11,15 +11,15 @@ describe("ERC1155Proxy contract", function () {
     [creator, alice, bob] = await ethers.getSigners()
     const ERC1155ProxyContract = await ethers.getContractFactory("ERC1155Proxy");
 
-    ERC1155Proxy = await upgrades.deployProxy(ERC1155ProxyContract, ["ipfs://"]);
+    ERC1155Proxy = await upgrades.deployProxy(ERC1155ProxyContract, [""]);
   })
 
   it("get initial state", async function () {
     const uri0 = await ERC1155Proxy.uri(0)
     const uri1 = await ERC1155Proxy.uri(1)
 
-    expect(uri0).to.equal("ipfs://")
-    expect(uri1).to.equal("ipfs://")
+    expect(uri0).to.equal("")
+    expect(uri1).to.equal("")
   })
 
   it("mint for same id", async function () {
@@ -57,6 +57,12 @@ describe("ERC1155Proxy contract", function () {
     expect(aliceBalance2).to.equal(20)
     expect(bobBalance1).to.equal(30)
     expect(bobBalance2).to.equal(40)
+  })
+
+  it("setURI", async function () {
+    await ERC1155Proxy.setURI(1, "ipfs://test")
+    const uri = await ERC1155Proxy.uri(1)
+    expect(uri).to.equal("ipfs://test")
   })
 
   it("mintBatchAddresses", async function () {

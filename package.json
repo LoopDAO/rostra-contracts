@@ -1,5 +1,5 @@
 {
-  "name": "Example12-token-crowdfund",
+  "name": "rostra-contracts",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -11,8 +11,8 @@
     "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Rostra",
+  "license": "MIT",
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
     "@openzeppelin/contracts-upgradeable": "^4.2.0",

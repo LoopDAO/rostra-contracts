@@ -12,9 +12,6 @@ contract ERC1155Proxy is
     IERC1155Proxy,
     ERC1155PresetMinterPauserUpgradeable
 {
-    /// @notice Emitted when the ERC1155Proxy is initialized
-    event ERC1155ProxyInitialized(address controller);
-
     /// @dev The address of the Controller contract which will be allowed to call
     /// the mint* and burn* functions
     address internal controller;
@@ -224,8 +221,9 @@ contract ERC1155Proxy is
 
     /// @notice Sets `_tokenURI` as the tokenURI of `tokenId`.
     /// @param id The ERC1155 ID
-    function setTokenURI(uint256 id, string memory uri) public onlyOwner {
+    function setURI(uint256 id, string memory uri) public onlyOwner {
         _uris[id] = uri;
+        emit URI(id, uri);
     }
 
     ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
@@ -233,7 +231,7 @@ contract ERC1155Proxy is
     /// @notice Returns the uri for the given ERC1155 ID
     /// @param id The ERC1155 ID
     /// @return The uri for the given ERC1155 ID
-    function uri(uint256 id) override external view returns (string memory) {
+    function uri(uint256 id) override public view returns (string memory) {
         return(_uris[id]);
     }
 
@@ -264,4 +262,13 @@ contract ERC1155Proxy is
         }
         return totalSupplies;
     }
+
+    ///////////////////// EVENS /////////////////////
+
+    /// @notice Emitted when the ERC1155Proxy is initialized
+    event ERC1155ProxyInitialized(address controller);
+
+    /// @notice Emitted when the URI is changed
+    event URI(uint256 id, string uri);
+
 }
