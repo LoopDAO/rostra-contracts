@@ -223,7 +223,7 @@ contract ERC1155Proxy is
     /// @param id The ERC1155 ID
     function setURI(uint256 id, string memory uri) public onlyOwner {
         _uris[id] = uri;
-        emit URI(id, uri);
+        emit URI(uri, id);
     }
 
     ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
@@ -267,8 +267,5 @@ contract ERC1155Proxy is
 
     /// @notice Emitted when the ERC1155Proxy is initialized
     event ERC1155ProxyInitialized(address controller);
-
-    /// @notice Emitted when the URI is changed
-    event URI(uint256 id, string uri);
 
 }
