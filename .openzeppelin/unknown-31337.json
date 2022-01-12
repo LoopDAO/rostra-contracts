@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0xa3841916d6675568b8d0d38ef6275d01a07ea2aa8367f42f4a6de92d5aeb4d80",
+      "blockHash": "0x3667878ae2715adaf54bbef59969f090aa825a0d466f52550f243fc1aae3ce35",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -165,9 +165,9 @@
     }
   ],
   "impls": {
-    "30dc5eeee766c69b276721ecb1868b7eb7d1a901e5a728e290e5f3ca2dd1f479": {
+    "a52d27edd7b8830b21e55ff40d45482c6b985ef00c0e3537ab7b6ce84c046749": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x0c89f4f9306f55ce5b62ed0d9f432435523fc1485c851133e847030cd1e7b369",
+      "txHash": "0x8b18b9927e36de8a3cf0784357648a48fcd1b5e2861927e47e35c70a2bab8364",
       "layout": {
         "storage": [
           {
@@ -276,19 +276,19 @@
             "contract": "ERC1155Proxy",
             "label": "controller",
             "type": "t_address",
-            "src": "contracts/ERC1155Proxy.sol:20"
+            "src": "contracts/ERC1155Proxy.sol:17"
           },
           {
             "contract": "ERC1155Proxy",
             "label": "tokenTotalSupplies",
             "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/ERC1155Proxy.sol:24"
+            "src": "contracts/ERC1155Proxy.sol:21"
           },
           {
             "contract": "ERC1155Proxy",
             "label": "_uris",
             "type": "t_mapping(t_uint256,t_string_storage)",
-            "src": "contracts/ERC1155Proxy.sol:26"
+            "src": "contracts/ERC1155Proxy.sol:23"
           }
         ],
         "types": {
