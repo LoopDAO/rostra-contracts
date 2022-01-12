@@ -17,7 +17,7 @@ async function main() {
   // testnet
   // const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xDcCeaE654f60f3863634Ed0089eC422FAfcFC699');
   // mainnet
-  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0x4aC987d7f0f247173b76d8181a6dF5e809b404D6');
+  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xc35b5a30f7D0F4d924f6E892c02B506e48313e3D');
 
   const tokenId = 1
   const uri = "https://bafyreifsejbymctnxfcs4lnax7lkipb2lbtpmqw2e7npvomycpodpe7gyq.ipfs.dweb.link/metadata.json"

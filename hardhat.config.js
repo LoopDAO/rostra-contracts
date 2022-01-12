@@ -75,7 +75,7 @@ module.exports = {
       ]
     },
     polygon: {
-      url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
+      url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
       // url: "https://polygon-mainnet.infura.io/v3/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
       // url: "https://polygon-rpc.com/",
       accounts: [
