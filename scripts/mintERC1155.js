@@ -14,8 +14,10 @@ async function main() {
   );
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
-
-  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xDcCeaE654f60f3863634Ed0089eC422FAfcFC699');
+  // testnet
+  // const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xDcCeaE654f60f3863634Ed0089eC422FAfcFC699');
+  // mainnet
+  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0x4aC987d7f0f247173b76d8181a6dF5e809b404D6');
 
   const tokenId = 1
   const uri = "https://bafyreifsejbymctnxfcs4lnax7lkipb2lbtpmqw2e7npvomycpodpe7gyq.ipfs.dweb.link/metadata.json"
@@ -28,8 +30,8 @@ async function main() {
   const ids = [1, 1, 1, 1]
   const amounts = [1, 1, 1, 1]
 
-  // const result = await ERC1155Proxy.setURI(tokenId, uri);
-  // await ERC1155Proxy.mintBatchAddresses(addresses, ids, amounts, [])
+  const result = await ERC1155Proxy.setURI(tokenId, uri);
+  await ERC1155Proxy.mintBatchAddresses(addresses, ids, amounts, [])
 
   const balance0 = await ERC1155Proxy.balanceOf(addresses[0], 1)
   const balance1 = await ERC1155Proxy.balanceOf(addresses[1], 1)
