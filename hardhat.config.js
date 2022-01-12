@@ -68,18 +68,19 @@ module.exports = {
       */
     },
     polygontestnet: {
-      url: "https://matic-testnet-archive-rpc.bwarelabs.com",
+      url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_TESTNET,
+      // url: "https://matic-testnet-archive-rpc.bwarelabs.com",
       accounts: [
         mnemonic()
-      ],
-      gasPrice: 8000000000,
+      ]
     },
     polygon: {
-      url: "https://polygon-rpc.com/",
+      url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
+      // url: "https://polygon-mainnet.infura.io/v3/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
+      // url: "https://polygon-rpc.com/",
       accounts: [
         mnemonic()
-      ],
-      gasPrice: 8000000000,
+      ]
     },
     rinkeby: {
       url: "https://rinkeby.infura.io/v3/" + process.env.INFURA_ID,
