@@ -1,4 +1,4 @@
 export default {
-    ERC1155Proxy: '0x6F34B613b8C4D90B46808526e4CD21136699Fc78',
+    ERC1155Proxy: '0x70E5f497c048D8189Bd5f4A209529f8EC45CFd2e',
     CrowdFunding: '',
 }
