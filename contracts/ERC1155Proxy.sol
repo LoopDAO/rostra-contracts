@@ -22,6 +22,8 @@ contract ERC1155Proxy is
 
     mapping (uint256 => string) private _uris;
 
+    string public name;
+
     function initialize(
         string memory _uri
     ) public virtual override initializer {
@@ -221,9 +223,13 @@ contract ERC1155Proxy is
 
     /// @notice Sets `_tokenURI` as the tokenURI of `tokenId`.
     /// @param id The ERC1155 ID
-    function setURI(uint256 id, string memory uri) public onlyOwner {
+    function setURI(uint256 id, string memory uri) public onlyController {
         _uris[id] = uri;
         emit URI(uri, id);
+    }
+
+    function setName(string memory _name) public onlyController {
+        name = _name;
     }
 
     ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
