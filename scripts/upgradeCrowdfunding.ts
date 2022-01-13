@@ -4,7 +4,7 @@
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers, upgrades } from "hardhat"
-import { CrowdFunding } from "../constants/contracts"
+import contracts from "../constants/contracts"
 
 const CrowdFunding = contracts
 async function main() {
