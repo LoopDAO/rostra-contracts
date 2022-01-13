@@ -17,13 +17,9 @@ async function main() {
   );
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
-  // testnet
-  // const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xDcCeaE654f60f3863634Ed0089eC422FAfcFC699');
-  // mainnet
-  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", '0xc35b5a30f7D0F4d924f6E892c02B506e48313e3D');
 
-  const tokenId = 1
-  const uri = "https://bafyreifsejbymctnxfcs4lnax7lkipb2lbtpmqw2e7npvomycpodpe7gyq.ipfs.dweb.link/metadata.json"
+  const ERC1155Proxy = await ethers.getContractAt("ERC1155Proxy", contracts.ERC1155Proxy);
+
   const addresses = [
     "0x01AbECbEB70f67163a3aC8543E88d9C234A71Fa6",
     "0x496d56eadc895D6cBd46A97c729f0b89D91b58Cf",
@@ -31,7 +27,8 @@ async function main() {
     "0xF36d01cd2E2Ee9D6e39801BD2C30233231319F40",
     "0xb39bebc396c0849d1f894efb9037b76640fff9ce"
   ]
-  return;
+  const tokenId = 1
+  const uri = "https://bafyreifsejbymctnxfcs4lnax7lkipb2lbtpmqw2e7npvomycpodpe7gyq.ipfs.dweb.link/metadata.json"
   const ids = [1, 1, 1, 1, 1]
   // const ids = [2, 2, 2, 2, 2]
 
@@ -44,11 +41,13 @@ async function main() {
   const balance1 = await ERC1155Proxy.balanceOf(addresses[1], 1)
   const balance2 = await ERC1155Proxy.balanceOf(addresses[2], 1)
   const balance3 = await ERC1155Proxy.balanceOf(addresses[3], 1)
+  const balance4 = await ERC1155Proxy.balanceOf(addresses[4], 1)
 
   console.log("balance0", balance0.toString());
   console.log("balance1", balance1.toString());
   console.log("balance2", balance2.toString());
   console.log("balance3", balance3.toString());
+  console.log("balance4", balance3.toString());
 }
 
 // We recommend this pattern to be able to use async/await everywhere
