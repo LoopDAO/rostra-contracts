@@ -3,8 +3,7 @@
 //
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const { ethers, upgrades } = require("hardhat");
-const { CrowdFunding } = require("../constants/deployedContracts");
+import { ethers, upgrades } from "hardhat"
 
 async function main() {
   const [deployer] = await ethers.getSigners();
@@ -16,12 +15,13 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  //deploy Crowdfunding
-  const CrowdFundingContract = await ethers.getContractFactory("CrowdFunding");
-  // const result = await upgrades.deployProxy(CrowdFundingContract);
-  const result = await upgrades.upgradeProxy(CrowdFunding, CrowdFundingContract);
+  const Contract = await ethers.getContractFactory("ERC1155Proxy");
 
-  console.log("CrowdFundingContract address:", result.address);
+  const result = await upgrades.deployProxy(Contract, [
+    "ipfs://"
+  ]);
+
+  console.log("Contract address:", result.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

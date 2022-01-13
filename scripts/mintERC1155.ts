@@ -3,7 +3,10 @@
 //
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const { ethers, upgrades } = require("hardhat");
+import { ethers, upgrades } from "hardhat"
+import contracts from '../constants/contracts'
+
+console.log( 'contracts: ', contracts)
 
 async function main() {
   const [deployer] = await ethers.getSigners();
@@ -25,10 +28,14 @@ async function main() {
     "0x01AbECbEB70f67163a3aC8543E88d9C234A71Fa6",
     "0x496d56eadc895D6cBd46A97c729f0b89D91b58Cf",
     "0x54dBc5b60275f359C8db5A61c2aCEff2E5858d8d",
-    "0xF36d01cd2E2Ee9D6e39801BD2C30233231319F40"
+    "0xF36d01cd2E2Ee9D6e39801BD2C30233231319F40",
+    "0xb39bebc396c0849d1f894efb9037b76640fff9ce"
   ]
-  const ids = [1, 1, 1, 1]
-  const amounts = [1, 1, 1, 1]
+  return;
+  const ids = [1, 1, 1, 1, 1]
+  // const ids = [2, 2, 2, 2, 2]
+
+  const amounts = [1, 1, 1, 1, 1]
 
   const result = await ERC1155Proxy.setURI(tokenId, uri);
   await ERC1155Proxy.mintBatchAddresses(addresses, ids, amounts, [])

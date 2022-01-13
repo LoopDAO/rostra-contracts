@@ -1,22 +1,11 @@
-require('@openzeppelin/hardhat-upgrades');
-require("@nomiclabs/hardhat-waffle");
-const fs = require("fs");
-require('dotenv').config()
+import "@openzeppelin/hardhat-upgrades";
+import "@nomiclabs/hardhat-waffle";
+import { config as dotEnvConfig } from "dotenv";
 
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async () => {
-  const accounts = await ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
+dotEnvConfig();
 
 function mnemonic() {
-
   return process.env.PRIVATE_KEY
-
 }
 
 /**
@@ -67,14 +56,14 @@ module.exports = {
         (you can put in a mnemonic here to set the deployer locally)
       */
     },
-    polygontestnet: {
-      url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_TESTNET,
-      // url: "https://matic-testnet-archive-rpc.bwarelabs.com",
+    polygonTestnet: {
+      // url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_TESTNET,
+      url: "https://matic-testnet-archive-rpc.bwarelabs.com",
       accounts: [
         mnemonic()
       ]
     },
-    polygon: {
+    polygonMainnet: {
       url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
       // url: "https://polygon-mainnet.infura.io/v3/" + process.env.ALCHEMY_ID_PLOYGON_MAINNET,
       // url: "https://polygon-rpc.com/",

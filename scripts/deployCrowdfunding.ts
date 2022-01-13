@@ -3,7 +3,7 @@
 //
 // When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-const { ethers, upgrades } = require("hardhat");
+import { ethers, upgrades } from "hardhat"
 
 async function main() {
   const [deployer] = await ethers.getSigners();
