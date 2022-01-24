@@ -129,6 +129,21 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
         }
     }
 
+    function mintAddresses(
+        address[] memory tos,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public onlyController {
+        // ERC1155PresetMinterPauserUpgradeable doesn't have the concept of
+        // totalSupply onchain so we must store and increment that ourselves
+        for (uint256 i = 0; i < tos.length; i++) {
+            tokenTotalSupplies[id] += amount;
+            // user ERC1155PresetMinterPauserUpgradeable's mint
+            super.mint(tos[i], id, amount, data);
+        }
+    }
+
     /// @notice burn the specified amount of ERC1155 token
     /// @dev This function is overriden only in order to enforce the `onlyController` modifer
     /// and add a total supply variable for each token
