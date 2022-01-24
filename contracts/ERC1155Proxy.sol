@@ -19,8 +19,6 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
 
     mapping(uint256 => string) private _uris;
 
-    string public name;
-
     /// @notice Perform inherited contracts' initializations
     function initialize(string memory _uri)
         public
@@ -191,11 +189,6 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
     function setURI(uint256 _id, string memory _uri) public onlyOwner {
         _uris[_id] = _uri;
         emit URI(_uri, _id);
-    }
-
-    function setName(string memory _name) public onlyOwner {
-        name = _name;
-        emit NameChanged(_name);
     }
 
     function setController(address _controller) public onlyOwner {
