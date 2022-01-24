@@ -8,10 +8,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetM
 /// @notice A contract for encapsulating all logic
 /// @notice This contract can be paused/unpaused by the admin
 /// @dev The controller is the only contract that can mint and burn tokens
-contract ERC1155Proxy is
-    IERC1155Proxy,
-    ERC1155PresetMinterPauserUpgradeable
-{
+contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
     /// @dev The address of the Controller contract which will be allowed to call
     /// the mint* and burn* functions
     address internal controller;
@@ -20,48 +17,38 @@ contract ERC1155Proxy is
     /// so we must store that ourselves
     mapping(uint256 => uint256) public tokenTotalSupplies;
 
-    mapping (uint256 => string) private _uris;
+    mapping(uint256 => string) private _uris;
 
     string public name;
 
-    function initialize(
-        string memory _uri
-    ) public virtual override initializer {
-        __ERC1155Proxy_init(_uri, msg.sender);
-    }
-
     /// @notice Perform inherited contracts' initializations
-    function __ERC1155Proxy_init(
-        string memory _uri,
-        address _controller
-    ) internal initializer {
+    function initialize(string memory _uri)
+        public
+        virtual
+        override
+        initializer
+    {
         __ERC1155PresetMinterPauser_init(_uri);
 
-        controller = _controller;
-
-        // only the Controller should be allowed to mint
-        renounceRole(MINTER_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, _controller);
-
-        emit ERC1155ProxyInitialized(_controller);
+        emit ERC1155ProxyInitialized(_uri);
     }
 
     ///////////////////// MODIFIER FUNCTIONS /////////////////////
 
-    /// @notice Check if the msg.sender is the privileged Controller contract address
+    /// @notice Check if the _msgSender() is the privileged Controller contract address
     modifier onlyController() {
         require(
-            msg.sender == controller,
+            _msgSender() == controller,
             "ERC1155Proxy: Sender must be the Controller"
         );
 
         _;
     }
 
-    /// @notice Check if the msg.sender is the privileged DEFAULT_ADMIN_ROLE holder
+    /// @notice Check if the _msgSender() is the privileged DEFAULT_ADMIN_ROLE holder
     modifier onlyOwner() {
         require(
-            hasRole(DEFAULT_ADMIN_ROLE, msg.sender),
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
             "ERC1155Proxy: Caller is not the owner"
         );
 
@@ -134,11 +121,7 @@ contract ERC1155Proxy is
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    )
-        public
-        onlyController
-    {
-
+    ) public onlyController {
         // ERC1155PresetMinterPauserUpgradeable doesn't have the concept of
         // totalSupply onchain so we must store and increment that ourselves
         for (uint256 i = 0; i < ids.length; i++) {
@@ -158,10 +141,7 @@ contract ERC1155Proxy is
         address account,
         uint256 id,
         uint256 amount
-    )
-        public
-        override(ERC1155BurnableUpgradeable, IERC1155Proxy)
-    {
+    ) public override(ERC1155BurnableUpgradeable, IERC1155Proxy) {
         // user ERC1155PresetMinterPauserUpgradeable's mint
         super.burn(account, id, amount);
 
@@ -171,8 +151,6 @@ contract ERC1155Proxy is
     }
 
     /// @notice burn the specified amounts of ERC1155 tokens
-    /// @dev This function is overriden only in order to enforce the `onlyController` modifer
-    /// and add a total supply variable for each token
     /// @param account the address for which to burn tokens
     /// @param ids the ERC1155 tokens to burn
     /// @param amounts the amounts of token to burn
@@ -180,10 +158,7 @@ contract ERC1155Proxy is
         address account,
         uint256[] memory ids,
         uint256[] memory amounts
-    )
-        public
-        override(ERC1155BurnableUpgradeable, IERC1155Proxy)
-    {
+    ) public override(ERC1155BurnableUpgradeable, IERC1155Proxy) {
         // user ERC1155PresetMinterPauserUpgradeable's burnBatch
         super.burnBatch(account, ids, amounts);
 
@@ -194,42 +169,43 @@ contract ERC1155Proxy is
         }
     }
 
-    /// @notice transfer the DEFAULT_ADMIN_ROLE and PAUSER_ROLE from the msg.sender to a new address
+    /// @notice transfer the MINTER_ROLE, DEFAULT_ADMIN_ROLE and PAUSER_ROLE from the _msgSender() to a new address
     /// @param _newAdmin the address of the new DEFAULT_ADMIN_ROLE and PAUSER_ROLE holder
     /// @dev only the admin address may call this function
     function transferOwnership(address _newAdmin) external onlyOwner {
         require(
-            _newAdmin != msg.sender,
+            _newAdmin != _msgSender(),
             "ERC1155Proxy: cannot transfer ownership to existing owner"
         );
 
-        // grant minter role to new admin
-        grantRole(MINTER_ROLE, _newAdmin);
-
-        // first make _newAdmin the a pauser
         grantRole(PAUSER_ROLE, _newAdmin);
-
-        // now remove the pause role from the current pauser
-        renounceRole(PAUSER_ROLE, msg.sender);
-
-        // then add _newAdmin to the admin role, while the msg.sender still
-        // has the DEFAULT_ADMIN_ROLE role
         grantRole(DEFAULT_ADMIN_ROLE, _newAdmin);
 
-        // now remove the current admin from the admin role, leaving only
-        // _newAdmin as the sole admin
-        renounceRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        renounceRole(PAUSER_ROLE, _msgSender());
+        renounceRole(DEFAULT_ADMIN_ROLE, _msgSender());
     }
 
     /// @notice Sets `_tokenURI` as the tokenURI of `tokenId`.
-    /// @param id The ERC1155 ID
-    function setURI(uint256 id, string memory uri) public onlyController {
-        _uris[id] = uri;
-        emit URI(uri, id);
+    /// @param _id The ERC1155 ID
+    /// @param _uri The ERC1155 _uri
+    function setURI(uint256 _id, string memory _uri) public onlyOwner {
+        _uris[_id] = _uri;
+        emit URI(_uri, _id);
     }
 
-    function setName(string memory _name) public onlyController {
+    function setName(string memory _name) public onlyOwner {
         name = _name;
+        emit NameChanged(_name);
+    }
+
+    function setController(address _controller) public onlyOwner {
+        require(controller != _controller, "ERC1155Proxy: This controller is already set");
+
+        revokeRole(MINTER_ROLE, controller);
+        grantRole(MINTER_ROLE, _controller);
+
+        controller = _controller;
+        emit ControllerChanged(_controller);
     }
 
     ///////////////////// VIEW/PURE FUNCTIONS /////////////////////
@@ -237,8 +213,8 @@ contract ERC1155Proxy is
     /// @notice Returns the uri for the given ERC1155 ID
     /// @param id The ERC1155 ID
     /// @return The uri for the given ERC1155 ID
-    function uri(uint256 id) override public view returns (string memory) {
-        return(_uris[id]);
+    function uri(uint256 id) public view override returns (string memory) {
+        return (_uris[id]);
     }
 
     /// @notice Returns the total supply for the given ERC1155 ID
@@ -272,6 +248,9 @@ contract ERC1155Proxy is
     ///////////////////// EVENS /////////////////////
 
     /// @notice Emitted when the ERC1155Proxy is initialized
-    event ERC1155ProxyInitialized(address controller);
+    event ERC1155ProxyInitialized(string uri);
+    event NameChanged(string name);
+    event ControllerChanged(address controller);
 
+    uint256[50] private __gap;
 }
