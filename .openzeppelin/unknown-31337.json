@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x0b743a83e282e125db8c9b2086643ccf43a4416d7d1d74cc9e8036d2fac403e6",
+      "blockHash": "0x6a833d2b11641ed1f8d592ff0ab158122175c36eafb0d8e7f03e51af0b0939e8",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -179,16 +179,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x4093611d3c866b1f3a98548e495147740848fdd82e7f909a91d35950b6ceb02d",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-      "txHash": "0x8a0c558d86719a48360127ce82415c2fd8ff6ed18e173b871defa041fb9b7eef",
-      "kind": "transparent"
-    },
-    {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
       "txHash": "0x7073e86fde96ecd272b4dab6fc1e236ca0f6135849e9e360e1f98670bca3392c",
       "kind": "transparent"
@@ -242,307 +232,19 @@
       "address": "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",
       "txHash": "0x97d296e2599606976f4f6e7e3dbaa34406424e26936b08d7a1fa196dfbacc046",
       "kind": "transparent"
+    },
+    {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0x460605838b28c209b333c786bdf9cc4938bf11a4dc154dbc3766d905b5b4c1e9",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "txHash": "0x18912b26d1dcf9778991c5dd78e7a89714d353291f0f1d7df87765785b60c997",
+      "kind": "transparent"
     }
   ],
   "impls": {
-    "9359fb3a7b2bb6a377f50cd150911bdddf6403164f64c2f9cb43c63417c7b983": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x3d7c1388ecc54673264b9139070e62a3722f094c8239f5e2b8e04a9704d64ec6",
-      "layout": {
-        "storage": [
-          {
-            "contract": "Initializable",
-            "label": "_initialized",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
-          },
-          {
-            "contract": "Initializable",
-            "label": "_initializing",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
-          },
-          {
-            "contract": "ContextUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
-          },
-          {
-            "contract": "ERC165Upgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol:36"
-          },
-          {
-            "contract": "AccessControlUpgradeable",
-            "label": "_roles",
-            "type": "t_mapping(t_bytes32,t_struct(RoleData)199_storage)",
-            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:64"
-          },
-          {
-            "contract": "AccessControlUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:232"
-          },
-          {
-            "contract": "AccessControlEnumerableUpgradeable",
-            "label": "_roleMembers",
-            "type": "t_mapping(t_bytes32,t_struct(AddressSet)5426_storage)",
-            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol:26"
-          },
-          {
-            "contract": "AccessControlEnumerableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol:74"
-          },
-          {
-            "contract": "ERC1155Upgradeable",
-            "label": "_balances",
-            "type": "t_mapping(t_uint256,t_mapping(t_address,t_uint256))",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:25"
-          },
-          {
-            "contract": "ERC1155Upgradeable",
-            "label": "_operatorApprovals",
-            "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:28"
-          },
-          {
-            "contract": "ERC1155Upgradeable",
-            "label": "_uri",
-            "type": "t_string_storage",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:31"
-          },
-          {
-            "contract": "ERC1155Upgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)47_storage",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol:471"
-          },
-          {
-            "contract": "ERC1155BurnableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155BurnableUpgradeable.sol:49"
-          },
-          {
-            "contract": "PausableUpgradeable",
-            "label": "_paused",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:29"
-          },
-          {
-            "contract": "PausableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)49_storage",
-            "src": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol:97"
-          },
-          {
-            "contract": "ERC1155PausableUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/extensions/ERC1155PausableUpgradeable.sol:48"
-          },
-          {
-            "contract": "ERC1155PresetMinterPauserUpgradeable",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol:142"
-          },
-          {
-            "contract": "ERC1155Proxy",
-            "label": "controller",
-            "type": "t_address",
-            "src": "contracts/ERC1155Proxy.sol:14"
-          },
-          {
-            "contract": "ERC1155Proxy",
-            "label": "tokenTotalSupplies",
-            "type": "t_mapping(t_uint256,t_uint256)",
-            "src": "contracts/ERC1155Proxy.sol:18"
-          },
-          {
-            "contract": "ERC1155Proxy",
-            "label": "_uris",
-            "type": "t_mapping(t_uint256,t_string_storage)",
-            "src": "contracts/ERC1155Proxy.sol:20"
-          },
-          {
-            "contract": "ERC1155Proxy",
-            "label": "__gap",
-            "type": "t_array(t_uint256)50_storage",
-            "src": "contracts/ERC1155Proxy.sol:264"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address"
-          },
-          "t_mapping(t_uint256,t_uint256)": {
-            "label": "mapping(uint256 => uint256)"
-          },
-          "t_uint256": {
-            "label": "uint256"
-          },
-          "t_mapping(t_uint256,t_string_storage)": {
-            "label": "mapping(uint256 => string)"
-          },
-          "t_string_storage": {
-            "label": "string"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]"
-          },
-          "t_bool": {
-            "label": "bool"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]"
-          },
-          "t_mapping(t_uint256,t_mapping(t_address,t_uint256))": {
-            "label": "mapping(uint256 => mapping(address => uint256))"
-          },
-          "t_mapping(t_address,t_uint256)": {
-            "label": "mapping(address => uint256)"
-          },
-          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
-            "label": "mapping(address => mapping(address => bool))"
-          },
-          "t_mapping(t_address,t_bool)": {
-            "label": "mapping(address => bool)"
-          },
-          "t_array(t_uint256)47_storage": {
-            "label": "uint256[47]"
-          },
-          "t_mapping(t_bytes32,t_struct(AddressSet)5426_storage)": {
-            "label": "mapping(bytes32 => struct EnumerableSetUpgradeable.AddressSet)"
-          },
-          "t_bytes32": {
-            "label": "bytes32"
-          },
-          "t_struct(AddressSet)5426_storage": {
-            "label": "struct EnumerableSetUpgradeable.AddressSet",
-            "members": [
-              {
-                "label": "_inner",
-                "type": "t_struct(Set)5125_storage"
-              }
-            ]
-          },
-          "t_struct(Set)5125_storage": {
-            "label": "struct EnumerableSetUpgradeable.Set",
-            "members": [
-              {
-                "label": "_values",
-                "type": "t_array(t_bytes32)dyn_storage"
-              },
-              {
-                "label": "_indexes",
-                "type": "t_mapping(t_bytes32,t_uint256)"
-              }
-            ]
-          },
-          "t_array(t_bytes32)dyn_storage": {
-            "label": "bytes32[]"
-          },
-          "t_mapping(t_bytes32,t_uint256)": {
-            "label": "mapping(bytes32 => uint256)"
-          },
-          "t_mapping(t_bytes32,t_struct(RoleData)199_storage)": {
-            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)"
-          },
-          "t_struct(RoleData)199_storage": {
-            "label": "struct AccessControlUpgradeable.RoleData",
-            "members": [
-              {
-                "label": "members",
-                "type": "t_mapping(t_address,t_bool)"
-              },
-              {
-                "label": "adminRole",
-                "type": "t_bytes32"
-              }
-            ]
-          }
-        }
-      }
-    },
-    "2b65f827d16ed188064c5bcf1df6416c241c587edae0a81a4309d28636920a14": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-      "txHash": "0x98edcbcf5fc6e317613b57033a3824c7ec4ebe6d85aadd318197300efb00f186",
-      "layout": {
-        "storage": [
-          {
-            "contract": "Initializable",
-            "label": "_initialized",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
-          },
-          {
-            "contract": "Initializable",
-            "label": "_initializing",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "erc1155Proxy",
-            "type": "t_contract(IERC1155Proxy)7201",
-            "src": "contracts/NFTManager.sol:13"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "controller",
-            "type": "t_address",
-            "src": "contracts/NFTManager.sol:14"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "currentId",
-            "type": "t_uint256",
-            "src": "contracts/NFTManager.sol:15"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "userToIds",
-            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
-            "src": "contracts/NFTManager.sol:17"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "nftToId",
-            "type": "t_mapping(t_address,t_uint256)",
-            "src": "contracts/NFTManager.sol:18"
-          }
-        ],
-        "types": {
-          "t_contract(IERC1155Proxy)7201": {
-            "label": "contract IERC1155Proxy"
-          },
-          "t_address": {
-            "label": "address"
-          },
-          "t_uint256": {
-            "label": "uint256"
-          },
-          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
-            "label": "mapping(address => uint256[])"
-          },
-          "t_array(t_uint256)dyn_storage": {
-            "label": "uint256[]"
-          },
-          "t_mapping(t_address,t_uint256)": {
-            "label": "mapping(address => uint256)"
-          },
-          "t_bool": {
-            "label": "bool"
-          }
-        }
-      }
-    },
     "d02b4cb328165618c03f3c73ddd1579927198dea92ed3bacb1c600b11df00642": {
       "address": "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",
       "txHash": "0x2186fc7d111c97d66407d8e0047ebf2f792beb00aaa74760aaaddc52fa50a7b5",
@@ -609,6 +311,194 @@
           },
           "t_mapping(t_address,t_uint256)": {
             "label": "mapping(address => uint256)"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "274966a5799a729be9621951ece788e30416b23c3a4ee478f88bf81a47692fb0": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "txHash": "0xdbdbe70f4d8d012d63acc729d11fd2df0d1cb95feb28109ff230f585d2618317",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "erc1155Proxy",
+            "type": "t_contract(IERC1155Proxy)7201",
+            "src": "contracts/NFTManager.sol:13"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "controller",
+            "type": "t_address",
+            "src": "contracts/NFTManager.sol:14"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "currentId",
+            "type": "t_uint256",
+            "src": "contracts/NFTManager.sol:15"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "userToIds",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "src": "contracts/NFTManager.sol:17"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "userToProxies",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "src": "contracts/NFTManager.sol:18"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "nftToId",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/NFTManager.sol:19"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToOwner",
+            "type": "t_mapping(t_address,t_address)",
+            "src": "contracts/NFTManager.sol:20"
+          }
+        ],
+        "types": {
+          "t_contract(IERC1155Proxy)7201": {
+            "label": "contract IERC1155Proxy"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "5842334eb3f9fb9253fbdfcead4384c99d6b333472bd61d250d99aaa6628591c": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "txHash": "0xc7e549b7deb92fbac1e6ef6f47e8cdb9fe657e59b8ad736b393f81823b210fc0",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "erc1155Proxy",
+            "type": "t_contract(IERC1155Proxy)7215",
+            "src": "contracts/NFTManager.sol:13"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "controller",
+            "type": "t_address",
+            "src": "contracts/NFTManager.sol:14"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "currentId",
+            "type": "t_uint256",
+            "src": "contracts/NFTManager.sol:15"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "userToIds",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "src": "contracts/NFTManager.sol:17"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "userToProxies",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "src": "contracts/NFTManager.sol:18"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "nftToId",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/NFTManager.sol:19"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToOwner",
+            "type": "t_mapping(t_address,t_address)",
+            "src": "contracts/NFTManager.sol:20"
+          }
+        ],
+        "types": {
+          "t_contract(IERC1155Proxy)7215": {
+            "label": "contract IERC1155Proxy"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
           },
           "t_bool": {
             "label": "bool"

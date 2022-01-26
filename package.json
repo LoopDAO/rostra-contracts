@@ -14,8 +14,8 @@
   "author": "Rostra",
   "license": "MIT",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.1.0",
-    "@openzeppelin/contracts-upgradeable": "^4.2.0",
+    "@openzeppelin/contracts": "^4.4.2",
+    "@openzeppelin/contracts-upgradeable": "^4.4.2",
     "@openzeppelin/hardhat-upgrades": "^1.10.0",
     "base64-sol": "1.0.1",
     "dotenv": "^10.0.0",

@@ -15,25 +15,45 @@ contract NFTManager is Initializable {
 	uint256 public currentId;
 
 	mapping(address => uint256[]) public userToIds;
+	mapping(address => address[]) public userToProxies;
 	mapping(address => uint256) public nftToId;
+	mapping(address => address) private proxyToOwner;
 
 	function initialize(address _controller) public virtual initializer {
 		controller = _controller;
 		currentId = 1000001;
 	}
 
-	function mintNewNFT(string memory _uri, address[] memory _addresses) external {
+	modifier onlyOwner() {
+		require(proxyToOwner[address(erc1155Proxy)] == msg.sender, "NFTManager: Caller is not the owner");
+
+		_;
+	}
+
+	function createNFT(uint256 index) public returns (address) {
+		ERC1155Proxy nft = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, index)) }(address(this));
+
+		userToProxies[msg.sender].push(address(nft));
+		userToIds[msg.sender].push(index);
+
+		proxyToOwner[address(nft)] = msg.sender;
+
+		erc1155Proxy = nft;
+		return address(nft);
+	}
+
+	function mintNewNFT(string memory _uri, address[] memory _addresses) public onlyOwner {
 		require(_addresses.length > 0, "Must supply at least one address");
+
 		currentId = currentId + 1;
 
 		erc1155Proxy.mintAddresses(_addresses, currentId, 1, "");
+
 		erc1155Proxy.setURI(currentId, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			userToIds[_addresses[i]].push(currentId);
 		}
 		nftToId[address(erc1155Proxy)] = currentId;
-
-		//console.log("---------------------", address(erc1155Proxy));
 	}
 
 	function mintExistingNFT(
@@ -54,7 +74,6 @@ contract NFTManager is Initializable {
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			userToIds[_addresses[i]].push(_nftId);
 		}
-		//console.log("---------------------", _nftId);
 	}
 
 	function getUserIds(address _user) public view returns (uint256[] memory) {
@@ -66,7 +85,8 @@ contract NFTManager is Initializable {
 	}
 
 	function getURI(uint256 _tokenId) external returns (string memory) {
-		return erc1155Proxy.uri(_tokenId);
+		string memory _uri = erc1155Proxy.uri(_tokenId);
+		return _uri;
 	}
 
 	function tokenTotalSupply(uint256 id) external view returns (uint256) {
@@ -77,7 +97,7 @@ contract NFTManager is Initializable {
 		return erc1155Proxy.tokenTotalSupplyBatch(ids);
 	}
 
-	function setERC1155Proxy(IERC1155Proxy _erc1155Proxy) external {
+	function setERC1155Proxy(IERC1155Proxy _erc1155Proxy) public {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid ERC1155Proxy address");
 		erc1155Proxy = _erc1155Proxy;
 	}
