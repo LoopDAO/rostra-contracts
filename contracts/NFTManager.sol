@@ -61,7 +61,7 @@ contract NFTManager is Initializable {
 		address _nftAddress,
 		string memory _uri,
 		address[] memory _addresses
-	) external {
+	) external onlyOwner{
 		require(_addresses.length > 0, "Must supply at least one address");
 		require(_nftAddress != address(0), "Must supply a valid NFT address");
 
