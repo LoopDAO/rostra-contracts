@@ -31,7 +31,8 @@ contract NFTManager is Initializable {
 	}
 
 	function createNFT(uint256 index) public returns (address) {
-		ERC1155Proxy nft = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, index)) }(address(this));
+		ERC1155Proxy nft = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, index)) }();
+        nft.initialize('',address(this));
 
 		userToProxies[msg.sender].push(address(nft));
 		userToIds[msg.sender].push(index);
