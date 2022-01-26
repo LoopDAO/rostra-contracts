@@ -134,7 +134,7 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
         uint256 id,
         uint256 amount,
         bytes memory data
-    ) public onlyController {
+    ) public override onlyController {
         // ERC1155PresetMinterPauserUpgradeable doesn't have the concept of
         // totalSupply onchain so we must store and increment that ourselves
         for (uint256 i = 0; i < tos.length; i++) {
@@ -185,7 +185,7 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
     /// @notice transfer the MINTER_ROLE, DEFAULT_ADMIN_ROLE and PAUSER_ROLE from the _msgSender() to a new address
     /// @param _newAdmin the address of the new DEFAULT_ADMIN_ROLE and PAUSER_ROLE holder
     /// @dev only the admin address may call this function
-    function transferOwnership(address _newAdmin) external onlyOwner {
+    function transferOwnership(address _newAdmin) external override onlyOwner {
         require(
             _newAdmin != _msgSender(),
             "ERC1155Proxy: cannot transfer ownership to existing owner"
@@ -201,12 +201,12 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
     /// @notice Sets `_tokenURI` as the tokenURI of `tokenId`.
     /// @param _id The ERC1155 ID
     /// @param _uri The ERC1155 _uri
-    function setURI(uint256 _id, string memory _uri) public onlyOwner {
+    function setURI(uint256 _id, string memory _uri) public override onlyOwner {
         _uris[_id] = _uri;
         emit URI(_uri, _id);
     }
 
-    function setController(address _controller) public onlyOwner {
+    function setController(address _controller) public override onlyOwner {
         require(controller != _controller, "ERC1155Proxy: This controller is already set");
 
         revokeRole(MINTER_ROLE, controller);
@@ -221,7 +221,8 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
     /// @notice Returns the uri for the given ERC1155 ID
     /// @param id The ERC1155 ID
     /// @return The uri for the given ERC1155 ID
-    function uri(uint256 id) public view override returns (string memory) {
+    function uri(uint256 id) public view override(ERC1155Upgradeable,IERC1155Proxy)  
+    returns (string memory) {
         return (_uris[id]);
     }
 

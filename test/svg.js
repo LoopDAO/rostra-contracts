@@ -61,7 +61,7 @@ describe("NFTSvg contract", function () {
     //expect(svg).toMatchSnapshot()
     //console.log("svg-----------", svg)
     expect(isSvg(svg)).to.eq(true)
-    fs.writeFileSync('test/NFT-RUV3.svg', svg)
+    fs.writeFileSync('./NFT-RUV3.svg', svg)
   })
 
 })

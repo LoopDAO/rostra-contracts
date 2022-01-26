@@ -3,7 +3,7 @@ import "@nomiclabs/hardhat-waffle";
 import { config as dotEnvConfig } from "dotenv";
 
 dotEnvConfig();
-
+const defaultNetwork = "localhost";
 function mnemonic() {
   return process.env.PRIVATE_KEY
 }
