@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x6a833d2b11641ed1f8d592ff0ab158122175c36eafb0d8e7f03e51af0b0939e8",
+      "blockHash": "0x3af646a6bf01e61e977b50ed4e8f2186ff6aeabf8081b525b523373e3a0f37dc",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -412,9 +412,9 @@
         }
       }
     },
-    "5842334eb3f9fb9253fbdfcead4384c99d6b333472bd61d250d99aaa6628591c": {
+    "2695c4e4ab2f8b7cd5ac4250b1fc631a95d1856b8feddbee3e1a6584e640f1da": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xc7e549b7deb92fbac1e6ef6f47e8cdb9fe657e59b8ad736b393f81823b210fc0",
+      "txHash": "0xf2b727d1285f0eaf47c2a481d682d09f6352e2e1e9f3baa8da1dca1113cf11c2",
       "layout": {
         "storage": [
           {
@@ -432,7 +432,7 @@
           {
             "contract": "NFTManager",
             "label": "erc1155Proxy",
-            "type": "t_contract(IERC1155Proxy)7215",
+            "type": "t_contract(IERC1155Proxy)7216",
             "src": "contracts/NFTManager.sol:13"
           },
           {
@@ -461,7 +461,7 @@
           },
           {
             "contract": "NFTManager",
-            "label": "nftToId",
+            "label": "proxyToId",
             "type": "t_mapping(t_address,t_uint256)",
             "src": "contracts/NFTManager.sol:19"
           },
@@ -473,7 +473,7 @@
           }
         ],
         "types": {
-          "t_contract(IERC1155Proxy)7215": {
+          "t_contract(IERC1155Proxy)7216": {
             "label": "contract IERC1155Proxy"
           },
           "t_address": {

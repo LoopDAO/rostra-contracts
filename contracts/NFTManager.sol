@@ -16,7 +16,7 @@ contract NFTManager is Initializable {
 
 	mapping(address => uint256[]) public userToIds;
 	mapping(address => address[]) public userToProxies;
-	mapping(address => uint256) public nftToId;
+	mapping(address => uint256) public proxyToId;
 	mapping(address => address) private proxyToOwner;
 
 	function initialize(address _controller) public virtual initializer {
@@ -45,15 +45,16 @@ contract NFTManager is Initializable {
 	function mintNewNFT(string memory _uri, address[] memory _addresses) public onlyOwner {
 		require(_addresses.length > 0, "Must supply at least one address");
 
-		currentId = currentId + 1;
+		uint256 id = currentId + 1;
 
-		erc1155Proxy.mintAddresses(_addresses, currentId, 1, "");
+		erc1155Proxy.mintAddresses(_addresses, id, 1, "");
 
-		erc1155Proxy.setURI(currentId, _uri);
+		erc1155Proxy.setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
-			userToIds[_addresses[i]].push(currentId);
+			userToIds[_addresses[i]].push(id);
 		}
-		nftToId[address(erc1155Proxy)] = currentId;
+		proxyToId[address(erc1155Proxy)] = id;
+        currentId = id;
 	}
 
 	function mintExistingNFT(
@@ -67,10 +68,11 @@ contract NFTManager is Initializable {
 		erc1155Proxy = IERC1155Proxy(_nftAddress);
 		require(address(erc1155Proxy) != address(0), "Must supply a valid NFT address");
 
-		uint256 _nftId = nftToId[_nftAddress];
+		uint256 _nftId = proxyToId[_nftAddress];
+        require(_nftId != 0, "Must supply a valid NFT address");
+
 		erc1155Proxy.mintAddresses(_addresses, _nftId, 1, "");
 		erc1155Proxy.setURI(_nftId, _uri);
-
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			userToIds[_addresses[i]].push(_nftId);
 		}
@@ -94,6 +96,7 @@ contract NFTManager is Initializable {
 	}
 
 	function tokenTotalSupplyBatch(uint256[] memory ids) external view returns (uint256[] memory) {
+        
 		return erc1155Proxy.tokenTotalSupplyBatch(ids);
 	}
 
