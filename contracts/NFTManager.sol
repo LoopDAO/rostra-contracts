@@ -10,7 +10,6 @@ contract NFTManager is Initializable {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
-	address public controller;
 	uint256 public currentId;
 
 	mapping(address => uint256[]) public userToIds;
@@ -18,8 +17,7 @@ contract NFTManager is Initializable {
 	mapping(address => address) private proxyToOwner;
 	mapping(address => uint256) private proxyToId;
 
-	function initialize(address _controller) public virtual initializer {
-		controller = _controller;
+	function initialize() public virtual initializer {
 		currentId = 1000001;
 	}
 
@@ -30,12 +28,13 @@ contract NFTManager is Initializable {
 	}
 
 	function createProxy() public returns (address) {
-		ERC1155Proxy nft = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender)) }();
-		nft.initialize("", address(this));
+		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender,userToProxies[msg.sender].length)) }();
+        proxy.initialize('');
+		proxy.setController(address(this));
 
-		userToProxies[msg.sender].push(address(nft));
-		proxyToOwner[address(nft)] = msg.sender;
-		return address(nft);
+		userToProxies[msg.sender].push(address(proxy));
+		proxyToOwner[address(proxy)] = msg.sender;
+		return address(proxy);
 	}
 
 	function mintNewNFT(

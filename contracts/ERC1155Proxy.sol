@@ -20,10 +20,7 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
 	mapping(uint256 => string) private _uris;
 
 	/// @notice Perform inherited contracts' initializations
-	function initialize(string memory _uri,address _controller) public virtual initializer {
-        require(_controller != address(0), "Controller address cannot be 0");
-        controller = _controller;
-
+	function initialize(string memory _uri) public override virtual initializer {
 		__ERC1155PresetMinterPauser_init(_uri);
 
 		emit ERC1155ProxyInitialized(_uri);

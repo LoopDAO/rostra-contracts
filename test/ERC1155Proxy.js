@@ -11,7 +11,7 @@ describe("ERC1155Proxy contract", function () {
     [owner, alice, bob] = await ethers.getSigners()
     const ERC1155ProxyContract = await ethers.getContractFactory("ERC1155Proxy");
 
-    ERC1155Proxy = await upgrades.deployProxy(ERC1155ProxyContract, [""]);
+    ERC1155Proxy = await upgrades.deployProxy(ERC1155ProxyContract, ['']);
     await ERC1155Proxy.setController(owner.address);
   })
 

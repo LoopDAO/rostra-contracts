@@ -14,7 +14,7 @@ describe("NFTManager contract...", function () {
     [owner, alice, bob] = await ethers.getSigners()
 
     const testContract = await ethers.getContractFactory("NFTManager");
-    depolyedManManager = await upgrades.deployProxy(testContract, [owner.address]);
+    depolyedManManager = await upgrades.deployProxy(testContract, []);
 
     expect(depolyedManManager.address).to.not.be.null;
   });
@@ -26,12 +26,10 @@ describe("NFTManager contract...", function () {
   it("should be able to create a new Proxy", async function () {
     await depolyedManManager.createProxy();
     let proxy = await depolyedManManager.userToProxies(owner.address, 0);
-
     expect(proxy.length).to.be.equal(42);
 
     await depolyedManManager.connect(alice).createProxy();
     proxy = await depolyedManManager.userToProxies(alice.address, 0);
-
     expect(proxy.length).to.be.equal(42);
   })
 
@@ -116,6 +114,19 @@ describe("NFTManager contract...", function () {
     expect((await depolyedManManager.getUserIds(bob.address)).length).to.equal(4)
     expect((await depolyedManManager.getUserIds(owner.address)).length).to.equal(1)
   })
+  it("create a new Proxy-2", async function () {
+    await depolyedManManager.createProxy();
+    let proxy = await depolyedManManager.userToProxies(owner.address, 1);
+    expect(proxy.length).to.be.equal(42);
 
+    await depolyedManManager.createProxy();
+    proxy = await depolyedManManager.userToProxies(owner.address, 2);
+    expect(proxy.length).to.be.equal(42);
+
+    await depolyedManManager.connect(alice).createProxy();
+    proxy = await depolyedManManager.userToProxies(alice.address, 1);
+
+    expect(proxy.length).to.be.equal(42);
+  })
 })
 
