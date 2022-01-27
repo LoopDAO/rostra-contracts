@@ -48,7 +48,7 @@ describe("NFTManager contract...", function () {
     const bobIds = await depolyedManManager.getUserIds(bob.address)
     const ownerIds = await depolyedManManager.getUserIds(owner.address)
 
-    expect(await depolyedManManager.currentId()).to.equal(1000002)
+    expect(await depolyedManManager.proxyToId(proxy)).to.equal(1)
     expect(aliceIds.length).to.equal(1)
     expect(bobIds.length).to.equal(1)
     expect(ownerIds.length).to.equal(0)
@@ -72,23 +72,23 @@ describe("NFTManager contract...", function () {
 
   it("tokenTotalSupply", async function () {
     var proxy = await depolyedManManager.userToProxies(owner.address, 0)
-    console.log("owner proxy address:", proxy)
+    //console.log("owner proxy address:", proxy)
     var proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, owner);
     expect(await proxy_.tokenTotalSupply(1000002)).to.equal(0)
     expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(0)
 
     proxy = await depolyedManManager.userToProxies(alice.address, 0)
-    console.log("alice proxy address:", proxy)
+    //console.log("alice proxy address:", proxy)
     proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, alice);
     expect(await proxy_.tokenTotalSupply(1000002)).to.equal(0)
     expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(0)
 
 
     proxy = await depolyedManManager.userToProxies(bob.address, 0)
-    console.log("bob proxy address:", proxy)
+    //console.log("bob proxy address:", proxy)
     proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
-    expect(await proxy_.tokenTotalSupply(1000002)).to.equal(2)
-    expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(2)
+    expect(await proxy_.tokenTotalSupply(1)).to.equal(2)
+    expect(await depolyedManManager.tokenTotalSupply(proxy, 1)).to.equal(2)
   })
   it("tokenTotalSupplyBatch", async function () {
     let proxy = await depolyedManManager.userToProxies(bob.address, 0)
@@ -96,7 +96,7 @@ describe("NFTManager contract...", function () {
     await depolyedManManager.connect(bob).mintNewNFT(proxy, 'ipfs://22222', [alice.address, bob.address]);
     await depolyedManManager.connect(bob).mintNewNFT(proxy, 'ipfs://33333', [alice.address, bob.address, owner.address]);
 
-    const tokenTotalSupplyBatch = await depolyedManManager.tokenTotalSupplyBatch(proxy, [1000002, 1000003, 1000004])
+    const tokenTotalSupplyBatch = await depolyedManManager.tokenTotalSupplyBatch(proxy, [1, 2, 3])
     expect(tokenTotalSupplyBatch.length).to.equal(3)
     expect(tokenTotalSupplyBatch[0]).to.equal(2)
 
@@ -109,7 +109,7 @@ describe("NFTManager contract...", function () {
 
     const proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
 
-    expect((await proxy_.uri(1000004))).to.equal('ipfs://test3')
+    expect((await proxy_.uri(3))).to.equal('ipfs://test3')
     expect((await depolyedManManager.getUserIds(alice.address)).length).to.equal(4)
     expect((await depolyedManManager.getUserIds(bob.address)).length).to.equal(4)
     expect((await depolyedManManager.getUserIds(owner.address)).length).to.equal(1)

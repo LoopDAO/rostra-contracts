@@ -10,15 +10,12 @@ contract NFTManager is Initializable {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
-	uint256 public currentId;
-
 	mapping(address => uint256[]) public userToIds;
 	mapping(address => address[]) public userToProxies;
-	mapping(address => address) private proxyToOwner;
-	mapping(address => uint256) private proxyToId;
+	mapping(address => address) public proxyToOwner;
+	mapping(address => uint256) public proxyToId;
 
 	function initialize() public virtual initializer {
-		currentId = 1000001;
 	}
 
 	modifier onlyOwner(address _erc1155Proxy) {
@@ -44,11 +41,10 @@ contract NFTManager is Initializable {
 	) public onlyOwner(_erc1155Proxy) {
 		require(_addresses.length > 0, "Must supply at least one address");
 
-		uint256 id = currentId + 1;
-
 		IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
 		require(address(proxy) != address(0), "Must supply a valid NFT address");
 
+        uint256 id = proxyToId[address(proxy)] + 1;
 		proxy.mintAddresses(_addresses, id, 1, "");
 		proxy.setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
@@ -56,7 +52,6 @@ contract NFTManager is Initializable {
 		}
 
 		proxyToId[address(proxy)] = id;
-		currentId = id;
 	}
 
 	function mintExistingNFT(
