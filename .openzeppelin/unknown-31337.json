@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0xdf9af7f2b59329d9d6c6d99365fc8594b4be7820c78e0def1b93131d5bc6c1fb",
+      "blockHash": "0x711de52c58156dc48bde4b92a154adf69dcd8d94eafde9b4d5d38674d2ff0fdd",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -240,7 +240,7 @@
     },
     {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x18912b26d1dcf9778991c5dd78e7a89714d353291f0f1d7df87765785b60c997",
+      "txHash": "0xfe9e261ab95d8123597b28c7a21ca1af5458b541d3e275b234625081ba4cda78",
       "kind": "transparent"
     }
   ],
@@ -412,9 +412,9 @@
         }
       }
     },
-    "e4513ab89e46375120e6d6231c1f9a9303cc4c62d71b1eb24f61319b4c9800bc": {
+    "f4d123a78cf145bc0638ad48b7cb2037e5f40704e936b55bcecfdf47177aff25": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0xe424773fe7ec174e84a1576c259d7212c3353a4d629066582b22fbd6c9de202f",
+      "txHash": "0x1d0cb45970df9b2d7343d3f69fbd09767504f135ee96024be6d9f906192e45e3",
       "layout": {
         "storage": [
           {
@@ -431,32 +431,32 @@
           },
           {
             "contract": "NFTManager",
-            "label": "erc1155Proxy",
-            "type": "t_contract(IERC1155Proxy)7217",
-            "src": "contracts/NFTManager.sol:13"
-          },
-          {
-            "contract": "NFTManager",
             "label": "controller",
             "type": "t_address",
-            "src": "contracts/NFTManager.sol:14"
+            "src": "contracts/NFTManager.sol:13"
           },
           {
             "contract": "NFTManager",
             "label": "currentId",
             "type": "t_uint256",
-            "src": "contracts/NFTManager.sol:15"
+            "src": "contracts/NFTManager.sol:14"
           },
           {
             "contract": "NFTManager",
             "label": "userToIds",
             "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
-            "src": "contracts/NFTManager.sol:17"
+            "src": "contracts/NFTManager.sol:16"
           },
           {
             "contract": "NFTManager",
             "label": "userToProxies",
             "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "src": "contracts/NFTManager.sol:17"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToOwner",
+            "type": "t_mapping(t_address,t_address)",
             "src": "contracts/NFTManager.sol:18"
           },
           {
@@ -464,18 +464,9 @@
             "label": "proxyToId",
             "type": "t_mapping(t_address,t_uint256)",
             "src": "contracts/NFTManager.sol:19"
-          },
-          {
-            "contract": "NFTManager",
-            "label": "proxyToOwner",
-            "type": "t_mapping(t_address,t_address)",
-            "src": "contracts/NFTManager.sol:20"
           }
         ],
         "types": {
-          "t_contract(IERC1155Proxy)7217": {
-            "label": "contract IERC1155Proxy"
-          },
           "t_address": {
             "label": "address"
           },
@@ -494,11 +485,11 @@
           "t_array(t_address)dyn_storage": {
             "label": "address[]"
           },
-          "t_mapping(t_address,t_uint256)": {
-            "label": "mapping(address => uint256)"
-          },
           "t_mapping(t_address,t_address)": {
             "label": "mapping(address => address)"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
           },
           "t_bool": {
             "label": "bool"

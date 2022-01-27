@@ -23,25 +23,27 @@ describe("NFTManager contract...", function () {
 
   })
 
-  it("should be able to create a new NFT", async function () {
-    await depolyedManManager.createNFT(1);
-    var ids = await depolyedManManager.getUserIds(owner.address);
-    expect(ids.length).to.be.equal(1);
-    expect(ids[0]).to.be.equal(1);
+  it("should be able to create a new Proxy", async function () {
+    await depolyedManManager.createProxy();
+    let proxy = await depolyedManManager.userToProxies(owner.address, 0);
 
-    await depolyedManManager.connect(alice).createNFT(2);
-    ids = await depolyedManManager.getUserIds(alice.address);
-    expect(ids.length).to.be.equal(1);
-    expect(ids[0]).to.be.equal(2);
+    expect(proxy.length).to.be.equal(42);
+
+    await depolyedManManager.connect(alice).createProxy();
+    proxy = await depolyedManManager.userToProxies(alice.address, 0);
+
+    expect(proxy.length).to.be.equal(42);
   })
 
   it("mintNewNFT...", async function () {
+    let proxy = await depolyedManManager.userToProxies(alice.address, 0);
     await expect(
-      depolyedManManager.mintNewNFT('ipfs://aaaa', [alice.address, bob.address])
+      depolyedManManager.mintNewNFT(proxy, 'ipfs://aaaa', [alice.address, bob.address])
     ).to.be.revertedWith('NFTManager: Caller is not the owner');
 
-    await depolyedManManager.connect(bob).createNFT(3);
-    await depolyedManManager.connect(bob).mintNewNFT('ipfs://bbbb', [alice.address, bob.address]);
+    await depolyedManManager.connect(bob).createProxy();
+    proxy = await depolyedManManager.userToProxies(bob.address, 0);
+    await depolyedManManager.connect(bob).mintNewNFT(proxy, 'ipfs://bbbb', [alice.address, bob.address]);
 
 
     const aliceIds = await depolyedManManager.getUserIds(alice.address)
@@ -49,69 +51,70 @@ describe("NFTManager contract...", function () {
     const ownerIds = await depolyedManManager.getUserIds(owner.address)
 
     expect(await depolyedManManager.currentId()).to.equal(1000002)
-    expect(aliceIds.length).to.equal(2)
-    expect(bobIds.length).to.equal(2)
-    expect(ownerIds.length).to.equal(1)
+    expect(aliceIds.length).to.equal(1)
+    expect(bobIds.length).to.equal(1)
+    expect(ownerIds.length).to.equal(0)
   })
 
   it("setURI", async function () {
-    const nftAddress = await depolyedManManager.userToProxies(alice.address, 0);
+    let proxy = await depolyedManManager.userToProxies(bob.address, 0);
 
     const erc1155proxyJson = await require('../artifacts/contracts/ERC1155Proxy.sol/ERC1155Proxy.json');
-    const nft = await new ethers.Contract(nftAddress, erc1155proxyJson.abi, alice);
+    let proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
 
-    await depolyedManManager.setERC1155Proxy(nftAddress)
+    await depolyedManManager.setURI(proxy, 11, "ipfs://test")
+    //expect(await depolyedManManager.getURI(proxy, 11)).to.equal("ipfs://test")
+    expect(await proxy_.uri(11)).to.equal("ipfs://test")
 
-    await depolyedManManager.setURI(11, "ipfs://test")
-    expect(await nft.uri(11)).to.equal("ipfs://test")
+    await depolyedManManager.setURI(proxy, 2000002, "ipfs://test2")
+    expect(await proxy_.uri(2000002)).to.equal("ipfs://test2")
 
-    await depolyedManManager.setURI(2000002, "ipfs://test2")
-    expect(await nft.uri(2000002)).to.equal("ipfs://test2")
-
-    expect(await nft.uri(3000002)).to.equal("")
+    expect(await proxy_.uri(3000002)).to.equal("")
   })
 
   it("tokenTotalSupply", async function () {
-    var nftAddress1 = await depolyedManManager.userToProxies(owner.address, 0)
-    console.log("owner nftAddress", nftAddress1)
-    var nft = await new ethers.Contract(nftAddress1, erc1155proxyJson.abi, owner);
-    expect(await nft.tokenTotalSupply(1000002)).to.equal(0)
+    var proxy = await depolyedManManager.userToProxies(owner.address, 0)
+    console.log("owner proxy address:", proxy)
+    var proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, owner);
+    expect(await proxy_.tokenTotalSupply(1000002)).to.equal(0)
+    expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(0)
 
-    nftAddress1 = await depolyedManManager.userToProxies(alice.address, 0)
-    console.log("alice nftAddress", nftAddress1)
-    nft = await new ethers.Contract(nftAddress1, erc1155proxyJson.abi, alice);
-    expect(await nft.tokenTotalSupply(1000002)).to.equal(0)
+    proxy = await depolyedManManager.userToProxies(alice.address, 0)
+    console.log("alice proxy address:", proxy)
+    proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, alice);
+    expect(await proxy_.tokenTotalSupply(1000002)).to.equal(0)
+    expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(0)
 
 
-    nftAddress1 = await depolyedManManager.userToProxies(bob.address, 0)
-    console.log("bob nftAddress", nftAddress1)
-    nft = await new ethers.Contract(nftAddress1, erc1155proxyJson.abi, bob);
-    expect(await nft.tokenTotalSupply(1000002)).to.equal(2)
-
-    await depolyedManManager.setERC1155Proxy(nftAddress1);
-    expect(await depolyedManManager.tokenTotalSupply(1000002)).to.equal(2)
-
-    nftAddress = nftAddress1;
+    proxy = await depolyedManManager.userToProxies(bob.address, 0)
+    console.log("bob proxy address:", proxy)
+    proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
+    expect(await proxy_.tokenTotalSupply(1000002)).to.equal(2)
+    expect(await depolyedManManager.tokenTotalSupply(proxy, 1000002)).to.equal(2)
   })
   it("tokenTotalSupplyBatch", async function () {
-    await depolyedManManager.connect(bob).mintNewNFT('ipfs://22222', [alice.address, bob.address]);
-    await depolyedManManager.connect(bob).mintNewNFT('ipfs://33333', [alice.address, bob.address, owner.address]);
+    let proxy = await depolyedManManager.userToProxies(bob.address, 0)
 
-    const tokenTotalSupplyBatch = await depolyedManManager.tokenTotalSupplyBatch([1000002, 1000003, 1000004])
+    await depolyedManManager.connect(bob).mintNewNFT(proxy, 'ipfs://22222', [alice.address, bob.address]);
+    await depolyedManManager.connect(bob).mintNewNFT(proxy, 'ipfs://33333', [alice.address, bob.address, owner.address]);
+
+    const tokenTotalSupplyBatch = await depolyedManManager.tokenTotalSupplyBatch(proxy, [1000002, 1000003, 1000004])
     expect(tokenTotalSupplyBatch.length).to.equal(3)
     expect(tokenTotalSupplyBatch[0]).to.equal(2)
 
   })
 
   it("mintExistingNFT...", async function () {
-    await depolyedManManager.connect(bob).mintExistingNFT(nftAddress, 'ipfs://test3', [alice.address, bob.address]);
+    let proxy = await depolyedManManager.userToProxies(bob.address, 0)
 
-    var nft = await new ethers.Contract(nftAddress, erc1155proxyJson.abi, bob);
+    await depolyedManManager.connect(bob).mintExistingNFT(proxy, 'ipfs://test3', [alice.address, bob.address]);
 
-    expect((await nft.uri(1000004))).to.equal('ipfs://test3')
-    expect((await depolyedManManager.getUserIds(alice.address)).length).to.equal(5)
-    expect((await depolyedManManager.getUserIds(bob.address)).length).to.equal(5)
-    expect((await depolyedManManager.getUserIds(owner.address)).length).to.equal(2)
+    const proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
+
+    expect((await proxy_.uri(1000004))).to.equal('ipfs://test3')
+    expect((await depolyedManManager.getUserIds(alice.address)).length).to.equal(4)
+    expect((await depolyedManManager.getUserIds(bob.address)).length).to.equal(4)
+    expect((await depolyedManManager.getUserIds(owner.address)).length).to.equal(1)
   })
 
 })
