@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x920e449835c489674acfa1981a30fcaf09d3dafd4b811402c06c99cad6159eb6",
+      "blockHash": "0x43c23ed1aa25c032379013badd469725233c53a4c343bf95200076efffa21958",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -647,23 +647,11 @@
         }
       }
     },
-    "46f3fc9b77af22710b8226626871fe1a17b2d3f53a5d79b8250e73333d712e25": {
+    "036192217ca4c84e9fbb67d0f10d8c63b490fa4119027987adfa9415963ffd68": {
       "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
-      "txHash": "0x1035cb1d7f608b64befc13af2abc081eb4febfcbcb378adc5fdcdd64d57aee6f",
+      "txHash": "0x634ddffb44c6933e6b381bddf026a163be286894eb947a9d87546e76023e33a0",
       "layout": {
         "storage": [
-          {
-            "contract": "Initializable",
-            "label": "_initialized",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
-          },
-          {
-            "contract": "Initializable",
-            "label": "_initializing",
-            "type": "t_bool",
-            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
-          },
           {
             "contract": "NFTManager",
             "label": "userToIds",
@@ -728,9 +716,6 @@
           },
           "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
             "label": "mapping(uint256 => address[])"
-          },
-          "t_bool": {
-            "label": "bool"
           }
         }
       }

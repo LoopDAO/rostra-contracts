@@ -6,7 +6,7 @@ import "./IERC1155Proxy.sol";
 
 import "hardhat/console.sol";
 
-contract NFTManager is Initializable {
+contract NFTManager {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
