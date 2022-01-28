@@ -7,8 +7,6 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "./ERC1155Proxy.sol";
 import "./interface/IERC1155Proxy.sol";
 
-import "hardhat/console.sol";
-
 /// @title NFTManager
 /// @author Rostra Dev
 /// @notice NFT manages the entry master contract
@@ -67,7 +65,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	}
 
 	// set guild id to proxy
-	function setGuildId(uint256 _guildId, address _erc1155Proxy) external onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) {
+	function setGuildId(uint256 _guildId, address _erc1155Proxy) external onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) nonReentrant {
 		proxyToGuildId[_erc1155Proxy] = _guildId;
 		guildIdToProxies[_guildId].push(_erc1155Proxy);
 	}
