@@ -11,7 +11,7 @@ contract NFTManager {
 	using StringsUpgradeable for uint256;
 
 	//proxy to id
-	mapping(address => uint256[]) public userToIds;
+	mapping(address => uint256[]) public ownerToIds;
 	mapping(address => uint256) public proxyToId;
 
 	//owner to proxy
@@ -66,7 +66,7 @@ contract NFTManager {
 		proxy.mintAddresses(_addresses, id, 1, "");
 		proxy.setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
-			userToIds[_addresses[i]].push(id);
+			ownerToIds[_addresses[i]].push(id);
 		}
 
 		proxyToId[address(proxy)] = id;
@@ -89,12 +89,12 @@ contract NFTManager {
 		proxy.mintAddresses(_addresses, _nftId, 1, "");
 		proxy.setURI(_nftId, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
-			userToIds[_addresses[i]].push(_nftId);
+			ownerToIds[_addresses[i]].push(_nftId);
 		}
 	}
 
 	function getUserIds(address _user) public view returns (uint256[] memory) {
-		return userToIds[_user];
+		return ownerToIds[_user];
 	}
 
 	function setURI(

@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x43c23ed1aa25c032379013badd469725233c53a4c343bf95200076efffa21958",
+      "blockHash": "0x9da800ac00c6dbdc0691f901a563d38f92036ab37a6cd1949a6ae84b868349d8",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -647,14 +647,14 @@
         }
       }
     },
-    "036192217ca4c84e9fbb67d0f10d8c63b490fa4119027987adfa9415963ffd68": {
+    "24ae9991c2e26b53d224c678bd7942f69dc940bffb2980a8bdedd03f73579772": {
       "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
-      "txHash": "0x634ddffb44c6933e6b381bddf026a163be286894eb947a9d87546e76023e33a0",
+      "txHash": "0x0d5cffbd68414221a678fc7ced16e14082a6b7d046a2ba8db046072673db9087",
       "layout": {
         "storage": [
           {
             "contract": "NFTManager",
-            "label": "userToIds",
+            "label": "ownerToIds",
             "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
             "src": "contracts/NFTManager.sol:14"
           },
