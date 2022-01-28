@@ -8,10 +8,14 @@
       "type": 2,
       "accessList": [],
 <<<<<<< HEAD
+<<<<<<< HEAD
       "blockHash": "0xd8eeab156a7be6ba93e74e3e3548983139f4d45e20bd983f2ff40c1a91911c96",
 =======
       "blockHash": "0x43c23ed1aa25c032379013badd469725233c53a4c343bf95200076efffa21958",
 >>>>>>> 3559b11a5c506353ad190c86b1cb7c0293f96b79
+=======
+      "blockHash": "0x9da800ac00c6dbdc0691f901a563d38f92036ab37a6cd1949a6ae84b868349d8",
+>>>>>>> 75016068ea8ea9217c9340b4ee6fd1c2402d4108
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -664,15 +668,15 @@
         }
       }
     },
-    "036192217ca4c84e9fbb67d0f10d8c63b490fa4119027987adfa9415963ffd68": {
+    "24ae9991c2e26b53d224c678bd7942f69dc940bffb2980a8bdedd03f73579772": {
       "address": "0x70e0bA845a1A0F2DA3359C97E0285013525FFC49",
-      "txHash": "0x634ddffb44c6933e6b381bddf026a163be286894eb947a9d87546e76023e33a0",
+      "txHash": "0x0d5cffbd68414221a678fc7ced16e14082a6b7d046a2ba8db046072673db9087",
       "layout": {
         "storage": [
           {
 >>>>>>> 3559b11a5c506353ad190c86b1cb7c0293f96b79
             "contract": "NFTManager",
-            "label": "userToIds",
+            "label": "ownerToIds",
             "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
             "src": "contracts/NFTManager.sol:14"
           },

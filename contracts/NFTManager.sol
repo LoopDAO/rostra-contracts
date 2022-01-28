@@ -14,7 +14,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	using StringsUpgradeable for uint256;
 
 	//proxy to id
-	mapping(address => uint256[]) public userToIds;
+	mapping(address => uint256[]) public ownerToIds;
 	mapping(address => uint256) public proxyToId;
 
 	//owner to proxy
@@ -81,7 +81,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		_erc1155Proxy.mintAddresses(_addresses, id, 1, "");
 		_erc1155Proxy.setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
-			userToIds[_addresses[i]].push(id);
+			ownerToIds[_addresses[i]].push(id);
 		}
 
 		proxyToId[address(_erc1155Proxy)] = id;
@@ -103,10 +103,14 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		_erc1155Proxy.mintAddresses(_addresses, _nftId, 1, "");
 		_erc1155Proxy.setURI(_nftId, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
-			userToIds[_addresses[i]].push(_nftId);
+			ownerToIds[_addresses[i]].push(_nftId);
 		}
 
 		emit MintExistingNFT(address(_erc1155Proxy), _uri, _addresses.length);
+	}
+
+	function getUserIds(address _user) public view returns (uint256[] memory) {
+		return ownerToIds[_user];
 	}
 
 	function setURI(
