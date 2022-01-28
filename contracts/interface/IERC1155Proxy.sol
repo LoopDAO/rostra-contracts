@@ -47,7 +47,7 @@ interface IERC1155Proxy {
 
 	function setURI(uint256 _id, string memory _uri) external;
 
-	function uri(uint256 id) external returns (string memory);
+	function uri(uint256 id) external view returns (string memory);
 
 	function transferOwnership(address _newAdmin) external;
 

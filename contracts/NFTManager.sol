@@ -9,19 +9,22 @@ import "./interface/IERC1155Proxy.sol";
 
 import "hardhat/console.sol";
 
+/// @title NFTManager
+/// @author Rostra Dev
+/// @notice NFT manages the entry master contract
 contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
-	//proxy to id
+	// proxy to id
 	mapping(address => uint256[]) public ownerToIds;
 	mapping(address => uint256) public proxyToId;
 
-	//owner to proxy
+	// owner to proxy
 	mapping(address => address[]) public ownerToProxies;
 	mapping(address => address) public proxyToOwner;
 
-	//guildId to proxy
+	// guildId to proxy
 	mapping(address => uint256) public proxyToGuildId;
 	mapping(uint256 => address[]) public guildIdToProxies;
 
@@ -109,10 +112,6 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		emit MintExistingNFT(address(_erc1155Proxy), _uri, _addresses.length);
 	}
 
-	function getUserIds(address _user) public view returns (uint256[] memory ids) {
-		return ownerToIds[_user];
-	}
-
 	function setURI(
 		IERC1155Proxy _erc1155Proxy,
 		uint256 _tokenId,
@@ -125,9 +124,20 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		emit SetURI(address(_erc1155Proxy), _tokenId, _uri);
 	}
 
-	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) external returns (string memory uri) {
-		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
-		uri = _erc1155Proxy.uri(_tokenId);
+	function getUserIds(address _user) external view returns (uint256[] memory) {
+		return ownerToIds[_user];
+	}
+
+	function getGuildIdProxies(uint256 _guildId) external view returns (address[] memory) {
+		return guildIdToProxies[_guildId];
+	}
+
+	function getOwnerIds(address _owner) external view returns (uint256[] memory) {
+		return ownerToIds[_owner];
+	}
+
+	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) public view returns (string memory) {
+		return _erc1155Proxy.uri(_tokenId);
 	}
 
 	function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external view returns (uint256 amount) {
