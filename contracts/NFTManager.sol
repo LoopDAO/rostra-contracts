@@ -17,6 +17,14 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	mapping(address => uint256[]) public userToIds;
 	mapping(address => uint256) public proxyToId;
 
+	//owner to proxy
+	mapping(address => address[]) public ownerToProxies;
+	mapping(address => address) public proxyToOwner;
+
+	//guildId to proxy
+	mapping(address => uint256) public proxyToGuildId;
+	mapping(uint256 => address[]) public guildIdToProxies;
+
 	function initialize() public initializer {
 		__Ownable_init();
 		__ReentrancyGuard_init();
@@ -45,7 +53,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     //-------------------------------
 
 	function createProxy() external {
-		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender,userToProxies[msg.sender].length)) }();
+		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, ownerToProxies[msg.sender].length)) }();
         proxy.initialize('');
 		proxy.setController(address(this));
 
@@ -56,16 +64,9 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	}
 
 	// set guild id to proxy
-	function setGuildId(uint256 guildId, address _erc1155Proxy) public {
-		require(proxyToOwner[_erc1155Proxy] == msg.sender, "NFTManager: Caller is not the owner");
-
-		proxyToGuildId[_erc1155Proxy] = guildId;
-		guildIdToProxies[guildId].push(_erc1155Proxy);
-	}
-
-	function getProxiesByGuildId(uint256 guildId) public returns (address[] memory) {
-		require(guildId != 0, "NFTManager: GuildId is 0");
-		return guildIdToProxies[guildId];
+	function setGuildId(uint256 _guildId, address _erc1155Proxy) external onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) {
+		proxyToGuildId[_erc1155Proxy] = _guildId;
+		guildIdToProxies[_guildId].push(_erc1155Proxy);
 	}
 
 	function mintNewNFT(
