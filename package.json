@@ -8,7 +8,8 @@
     "test": "npx hardhat test test/*",
     "testsvg": "npx hardhat test test/svg.js",
     "deploy-testnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygontestnet",
-    "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon"
+    "deploy-mainnet": "npx hardhat run scripts/deploy_crowdfunding.js --network polygon",
+    "prettier:solidity": "./node_modules/.bin/prettier --write contracts/**/*.sol"
   },
   "keywords": [],
   "author": "Rostra",
@@ -27,12 +28,17 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "hardhat-abi-exporter": "^2.2.1",
     "chai": "^4.3.4",
     "ethereum-waffle": "^3.4.0",
-    "ethers": "^5.3.1"
+    "ethers": "^5.3.1",
+    "hardhat-abi-exporter": "^2.2.1",
+    "prettier": "^2.5.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.19"
   },
-  "engines": {
-    "node": ">=16"
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "bracketSpacing": true
   }
 }

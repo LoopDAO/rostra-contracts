@@ -8,49 +8,48 @@ pragma solidity 0.8.4;
 /// @dev This contract exists solely to decrease the size of the deployed SeriesController
 /// bytecode so it can be lower than the Spurious Dragon bytecode size limit
 interface IERC1155Proxy {
-	function tokenTotalSupply(uint256 id) external view returns (uint256);
-    
-	function tokenTotalSupplyBatch(uint256[] memory ids) external view returns (uint256[] memory);
+  function tokenTotalSupply(uint256 id) external view returns (uint256);
 
-	function mint(
-		address to,
-		uint256 id,
-		uint256 amount,
-		bytes memory data
-	) external;
+  function tokenTotalSupplyBatch(uint256[] memory ids) external view returns (uint256[] memory);
 
-	function mintBatch(
-		address to,
-		uint256[] memory ids,
-		uint256[] memory amounts,
-		bytes memory data
-	) external;
+  function mint(
+    address to,
+    uint256 id,
+    uint256 amount,
+    bytes memory data
+  ) external;
 
-	function burn(
-		address account,
-		uint256 id,
-		uint256 amount
-	) external;
+  function mintBatch(
+    address to,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+  ) external;
 
-	function burnBatch(
-		address account,
-		uint256[] memory ids,
-		uint256[] memory amounts
-	) external;
+  function burn(
+    address account,
+    uint256 id,
+    uint256 amount
+  ) external;
 
-	function mintAddresses(
-		address[] memory tos,
-		uint256 id,
-		uint256 amount,
-		bytes memory data
-	) external;
+  function burnBatch(
+    address account,
+    uint256[] memory ids,
+    uint256[] memory amounts
+  ) external;
 
-	function setURI(uint256 _id, string memory _uri) external;
+  function mintAddresses(
+    address[] memory tos,
+    uint256 id,
+    uint256 amount,
+    bytes memory data
+  ) external;
 
-	function uri(uint256 id) external view returns (string memory);
+  function setURI(uint256 _id, string memory _uri) external;
 
-	function transferOwnership(address _newAdmin) external;
+  function uri(uint256 id) external view returns (string memory);
 
-	function setController(address _controller) external;
+  function transferOwnership(address _newAdmin) external;
 
+  function setController(address _controller) external;
 }
