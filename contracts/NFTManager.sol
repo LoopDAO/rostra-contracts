@@ -52,7 +52,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     //------- Users Functions -------
     //-------------------------------
 
-	function createProxy() external {
+	function createProxy() external nonReentrant {
 		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, ownerToProxies[msg.sender].length)) }();
         proxy.initialize('');
 		proxy.setController(address(this));
@@ -73,7 +73,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) external onlyProxyOwner(_erc1155Proxy) {
+	) external onlyProxyOwner(_erc1155Proxy) nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		require(_addresses.length > 0, "Must supply at least one address");
 
@@ -93,7 +93,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) external onlyProxyOwner(_erc1155Proxy) {
+	) external onlyProxyOwner(_erc1155Proxy) nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid Proxy address");
 		require(_addresses.length > 0, "Must supply at least one address");
 
@@ -109,7 +109,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		emit MintExistingNFT(address(_erc1155Proxy), _uri, _addresses.length);
 	}
 
-	function getUserIds(address _user) public view returns (uint256[] memory) {
+	function getUserIds(address _user) public view returns (uint256[] memory ids) {
 		return ownerToIds[_user];
 	}
 
@@ -117,7 +117,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		uint256 _tokenId,
 		string calldata _uri
-	) external {
+	) external nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "Must the owner of proxy");
 		_erc1155Proxy.setURI(_tokenId, _uri);
