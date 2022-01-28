@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.7.6;
-import "../interface/IERC20Metadata.sol";
-import "./NFTSVG.sol";
-import "../SafeMath.sol";
+
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+
+import "./NFTSVG.sol";
+import "./SafeMath.sol";
 import "./HexStrings.sol";
 import "./Address.sol";
+
+import "../interface/IERC20Metadata.sol";
 
 library GenerateSVG {
     using SafeMathUpgradeable for uint256;

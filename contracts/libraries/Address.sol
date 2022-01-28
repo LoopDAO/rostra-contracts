@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity >=0.7.6;
 
-import "../SafeMath.sol";
-import "./HexStrings.sol";
 import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
+import "./SafeMath.sol";
+import "./HexStrings.sol";
 
 library Address {
     using SafeMathUpgradeable for uint256;

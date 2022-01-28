@@ -1,5 +1,6 @@
 import "@openzeppelin/hardhat-upgrades";
 import "@nomiclabs/hardhat-waffle";
+import "hardhat-abi-exporter"
 import { config as dotEnvConfig } from "dotenv";
 
 dotEnvConfig();
@@ -101,5 +102,13 @@ module.exports = {
         mnemonic()
       ],
     },
+  },
+  abiExporter: {
+    path: './abi',
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    spacing: 2,
+    pretty: false,
   }
 };
