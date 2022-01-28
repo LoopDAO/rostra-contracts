@@ -5,12 +5,12 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 import "./ERC1155Proxy.sol";
-import "./interface/IERC1155Proxy.sol";
+import "./interface/INFTManager.sol";
 
 /// @title NFTManager
 /// @author Rostra Dev
 /// @notice NFT manages the entry master contract
-contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
@@ -53,7 +53,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     //------- Users Functions -------
     //-------------------------------
 
-	function createProxy() external nonReentrant {
+	function createProxy() external override nonReentrant {
 		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, ownerToProxies[msg.sender].length)) }();
         proxy.initialize('');
 		proxy.setController(address(this));
@@ -65,7 +65,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	}
 
 	// set guild id to proxy
-	function setGuildId(uint256 _guildId, address _erc1155Proxy) external onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) nonReentrant {
+	function setGuildId(uint256 _guildId, address _erc1155Proxy) external override onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) nonReentrant {
 		proxyToGuildId[_erc1155Proxy] = _guildId;
 		guildIdToProxies[_guildId].push(_erc1155Proxy);
 	}
@@ -74,7 +74,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) external onlyProxyOwner(_erc1155Proxy) nonReentrant {
+	) external override onlyProxyOwner(_erc1155Proxy) nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		require(_addresses.length > 0, "Must supply at least one address");
 
@@ -94,7 +94,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) external onlyProxyOwner(_erc1155Proxy) nonReentrant {
+	) external override onlyProxyOwner(_erc1155Proxy) nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid Proxy address");
 		require(_addresses.length > 0, "Must supply at least one address");
 
@@ -114,7 +114,7 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		IERC1155Proxy _erc1155Proxy,
 		uint256 _tokenId,
 		string calldata _uri
-	) external nonReentrant {
+	) external override nonReentrant {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "Must the owner of proxy");
 		_erc1155Proxy.setURI(_tokenId, _uri);
@@ -122,28 +122,28 @@ contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 		emit SetURI(address(_erc1155Proxy), _tokenId, _uri);
 	}
 
-	function getUserIds(address _user) external view returns (uint256[] memory) {
+	function getUserIds(address _user) external override view returns (uint256[] memory) {
 		return ownerToIds[_user];
 	}
 
-	function getGuildIdProxies(uint256 _guildId) external view returns (address[] memory) {
+	function getGuildIdProxies(uint256 _guildId) external override view returns (address[] memory) {
 		return guildIdToProxies[_guildId];
 	}
 
-	function getOwnerIds(address _owner) external view returns (uint256[] memory) {
+	function getOwnerIds(address _owner) external override view returns (uint256[] memory) {
 		return ownerToIds[_owner];
 	}
 
-	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) public view returns (string memory) {
+	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) external override view returns (string memory) {
 		return _erc1155Proxy.uri(_tokenId);
 	}
 
-	function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external view returns (uint256 amount) {
+	function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external override view returns (uint256 amount) {
 		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		amount = _erc1155Proxy.tokenTotalSupply(_id);
 	}
 
-	function tokenTotalSupplyBatch(IERC1155Proxy _erc1155Proxy, uint256[] calldata _ids) external view returns (uint256[] memory ids) {
+	function tokenTotalSupplyBatch(IERC1155Proxy _erc1155Proxy, uint256[] calldata _ids) external override view returns (uint256[] memory ids) {
         require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		ids = _erc1155Proxy.tokenTotalSupplyBatch(_ids);
 	}
