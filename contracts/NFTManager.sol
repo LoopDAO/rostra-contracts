@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+
 import "./ERC1155Proxy.sol";
-import "./IERC1155Proxy.sol";
+import "./interface/IERC1155Proxy.sol";
 
 import "hardhat/console.sol";
 
-contract NFTManager {
+contract NFTManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 	using AddressUpgradeable for address;
 	using StringsUpgradeable for uint256;
 
@@ -15,97 +18,108 @@ contract NFTManager {
 	mapping(address => address) public proxyToOwner;
 	mapping(address => uint256) public proxyToId;
 
-	modifier onlyOwner(address _erc1155Proxy) {
-		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "NFTManager: Caller is not the owner");
+	function initialize() public initializer {
+		__Ownable_init();
+		__ReentrancyGuard_init();
+	}
 
+	//-------------------------------
+    //------- Events ----------------
+    //-------------------------------
+
+	event MintNewNFT(address proxy, string uri, uint256 addressAmount);
+	event CreateProxy(address proxy);
+	event SetURI(address proxy, uint256 tokenId, string uri);
+	event MintExistingNFT(address _erc1155Proxy, string _uri, uint256 addressAmount);
+
+    //-------------------------------
+    //------- Modifier --------------
+    //-------------------------------
+
+	modifier onlyProxyOwner(IERC1155Proxy _erc1155Proxy) {
+		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "NFTManager: Caller is not the owner");
 		_;
 	}
 
-	function createProxy() public returns (address) {
+    //-------------------------------
+    //------- Users Functions -------
+    //-------------------------------
+
+	function createProxy() external {
 		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender,userToProxies[msg.sender].length)) }();
         proxy.initialize('');
 		proxy.setController(address(this));
 
 		userToProxies[msg.sender].push(address(proxy));
 		proxyToOwner[address(proxy)] = msg.sender;
-		return address(proxy);
+
+		emit CreateProxy(address(proxy));
 	}
 
 	function mintNewNFT(
-		address _erc1155Proxy,
+		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) public onlyOwner(_erc1155Proxy) {
+	) external onlyProxyOwner(_erc1155Proxy) {
+		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
 		require(_addresses.length > 0, "Must supply at least one address");
 
-		IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
-
-        uint256 id = proxyToId[address(proxy)] + 1;
-		proxy.mintAddresses(_addresses, id, 1, "");
-		proxy.setURI(id, _uri);
+        uint256 id = proxyToId[address(_erc1155Proxy)] + 1;
+		_erc1155Proxy.mintAddresses(_addresses, id, 1, "");
+		_erc1155Proxy.setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			userToIds[_addresses[i]].push(id);
 		}
 
-		proxyToId[address(proxy)] = id;
+		proxyToId[address(_erc1155Proxy)] = id;
+
+		emit MintNewNFT(address(_erc1155Proxy), _uri, _addresses.length);
 	}
 
 	function mintExistingNFT(
-		address _erc1155Proxy,
+		IERC1155Proxy _erc1155Proxy,
 		string memory _uri,
 		address[] memory _addresses
-	) external onlyOwner(_erc1155Proxy) {
+	) external onlyProxyOwner(_erc1155Proxy) {
+		require(address(_erc1155Proxy) != address(0), "Must supply a valid Proxy address");
 		require(_addresses.length > 0, "Must supply at least one address");
-		require(_erc1155Proxy != address(0), "Must supply a valid Proxy address");
 
-		IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
-
-		uint256 _nftId = proxyToId[_erc1155Proxy];
+		uint256 _nftId = proxyToId[address(_erc1155Proxy)];
 		require(_nftId != 0, "Must supply a valid NFT address");
 
-		proxy.mintAddresses(_addresses, _nftId, 1, "");
-		proxy.setURI(_nftId, _uri);
+		_erc1155Proxy.mintAddresses(_addresses, _nftId, 1, "");
+		_erc1155Proxy.setURI(_nftId, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			userToIds[_addresses[i]].push(_nftId);
 		}
-	}
 
-	function getUserIds(address _user) public view returns (uint256[] memory) {
-		return userToIds[_user];
+		emit MintExistingNFT(address(_erc1155Proxy), _uri, _addresses.length);
 	}
 
 	function setURI(
-		address _erc1155Proxy,
+		IERC1155Proxy _erc1155Proxy,
 		uint256 _tokenId,
-		string memory _uri
+		string calldata _uri
 	) external {
-		IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
+		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
+		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "Must the owner of proxy");
+		_erc1155Proxy.setURI(_tokenId, _uri);
 
-		proxy.setURI(_tokenId, _uri);
+		emit SetURI(address(_erc1155Proxy), _tokenId, _uri);
 	}
 
-	function getURI(address _erc1155Proxy, uint256 _tokenId) external returns (string memory) {
-		IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
-
-		string memory _uri = proxy.uri(_tokenId);
-		return _uri;
+	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) external returns (string memory uri) {
+		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
+		uri = _erc1155Proxy.uri(_tokenId);
 	}
 
-	function tokenTotalSupply(address _erc1155Proxy,uint256 id) external view returns (uint256) {
-        IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
-
-		return proxy.tokenTotalSupply(id);
+	function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external view returns (uint256 amount) {
+		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
+		amount = _erc1155Proxy.tokenTotalSupply(_id);
 	}
 
-	function tokenTotalSupplyBatch(address _erc1155Proxy,uint256[] memory ids) external view returns (uint256[] memory) {
-        IERC1155Proxy proxy = IERC1155Proxy(_erc1155Proxy);
-		require(address(proxy) != address(0), "Must supply a valid NFT address");
-
-		return proxy.tokenTotalSupplyBatch(ids);
+	function tokenTotalSupplyBatch(IERC1155Proxy _erc1155Proxy, uint256[] calldata _ids) external view returns (uint256[] memory ids) {
+        require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
+		ids = _erc1155Proxy.tokenTotalSupplyBatch(_ids);
 	}
 }

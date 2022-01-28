@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.4;
 
-import "./IERC1155Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/presets/ERC1155PresetMinterPauserUpgradeable.sol";
+
+import "./interface/IERC1155Proxy.sol";
+
 import "hardhat/console.sol";
+
 /// @title ERC1155Proxy
 /// @notice A contract for encapsulating all logic
 /// @notice This contract can be paused/unpaused by the admin
