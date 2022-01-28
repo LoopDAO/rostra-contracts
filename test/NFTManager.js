@@ -79,17 +79,14 @@ describe("NFTManager contract...", function () {
 
   it("setURI", async function () {
     let proxy = await depolyedManManager.ownerToProxies(bob.address, 0);
-
-    const erc1155proxyJson = await require('../artifacts/contracts/ERC1155Proxy.sol/ERC1155Proxy.json');
     let proxy_ = await new ethers.Contract(proxy, erc1155proxyJson.abi, bob);
 
-    await depolyedManManager.setURI(proxy, 11, "ipfs://test")
+    await depolyedManManager.connect(bob).setURI(proxy, 11, "ipfs://test")
     //expect(await depolyedManManager.getURI(proxy, 11)).to.equal("ipfs://test")
     expect(await proxy_.uri(11)).to.equal("ipfs://test")
 
-    await depolyedManManager.setURI(proxy, 2000002, "ipfs://test2")
+    await depolyedManManager.connect(bob).setURI(proxy, 2000002, "ipfs://test2")
     expect(await proxy_.uri(2000002)).to.equal("ipfs://test2")
-
     expect(await proxy_.uri(3000002)).to.equal("")
   })
 
