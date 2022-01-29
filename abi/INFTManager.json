@@ -1,28 +1,25 @@
 [
   {
-    "inputs": [],
-    "name": "createProxy",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_guildId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getGuildIdProxies",
-    "outputs": [
+        "internalType": "string",
+        "name": "_guildName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      },
       {
         "internalType": "address[]",
-        "name": "",
+        "name": "_addresses",
         "type": "address[]"
       }
     ],
-    "stateMutability": "view",
+    "name": "createGuild",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -47,9 +44,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -90,9 +87,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -113,9 +110,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -136,9 +133,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "_guildId",
-        "type": "uint256"
+        "type": "bytes32"
       },
       {
         "internalType": "address",
@@ -154,9 +151,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -177,9 +174,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -201,9 +198,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256[]",

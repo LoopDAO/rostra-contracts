@@ -18,13 +18,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_erc1155Proxy",
+        "name": "erc1155Proxy",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "_uri",
+        "name": "uri",
         "type": "string"
       },
       {
@@ -107,29 +107,26 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "createProxy",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_guildId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getGuildIdProxies",
-    "outputs": [
+        "internalType": "string",
+        "name": "_guildName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_uri",
+        "type": "string"
+      },
       {
         "internalType": "address[]",
-        "name": "",
+        "name": "_addresses",
         "type": "address[]"
       }
     ],
-    "stateMutability": "view",
+    "name": "createGuild",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -154,9 +151,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -197,22 +194,36 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "bytes32"
       }
     ],
-    "name": "guildIdToProxies",
+    "name": "guildIdToProxy",
     "outputs": [
       {
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "guildNameToGuildId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -228,9 +239,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -251,9 +262,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "string",
@@ -343,9 +354,9 @@
     "name": "proxyToGuildId",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "",
-        "type": "uint256"
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -399,9 +410,9 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
+        "internalType": "bytes32",
         "name": "_guildId",
-        "type": "uint256"
+        "type": "bytes32"
       },
       {
         "internalType": "address",
@@ -417,9 +428,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -440,9 +451,28 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "string",
+        "name": "_str",
+        "type": "string"
+      }
+    ],
+    "name": "stringToBytes32",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -464,9 +494,9 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC1155Proxy",
-        "name": "_erc1155Proxy",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "_guildId",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256[]",

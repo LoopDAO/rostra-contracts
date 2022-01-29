@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0x19d04f65b368986cabebd785e7851dddfa6705408a0ce1efd025aa2b2d0eeb3f",
+      "blockHash": "0xca89624b904e09b11ecd401b4678ed8b526af66468a20ef3d2e5629250fc5a94",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -44,15 +44,75 @@
   },
   "proxies": [
     {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "txHash": "0xbf7f48604cda0b85c3b27fd2963d1bfbc70ba6c4d9ffaf24f291604346ca2a43",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0xe86c99da1f6f302a2759434b0bc0bab81300de26f6c2f8790c4af05b6890722e",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+      "txHash": "0x01335d4123de682df64fec19a853cbfdfa5576d2b9fdc036f4480b85e60e5977",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "txHash": "0x2c720b273230d475b37a59cd889b6a1a5ba965e22645a7b11d635c35ad7a38f1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+      "txHash": "0xa371821268574c8b5006afbdabe3877c9cf2aa0ebaf872c61b0e3c2caba12bfe",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
+      "txHash": "0x9be01b37c37ed17e81b516da812a196e0100c6a31db7f3078a4835eef8ac7639",
+      "kind": "transparent"
+    },
+    {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0x006e7df1f2ba0346fb471bc0c36e8180d8428d43b6986bf422672432ca47f0e3",
+      "txHash": "0x972f7e2f06cb4849a8e86559d631e2ed38f1cae197db3a2d100690d8c787329a",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "txHash": "0x6998e3e79a3b56c6e5db71491dee7c9771900ceaae598897ed52fee24927f749",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "txHash": "0xcbf3a0932826c163f4f178d28a6ae06d93ae8006ec484ba931e17f6d3a84dcda",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+      "txHash": "0x9395d8d3ed8e19b252318ce21909b652e6e70ea1a7ed8dc2b7db34ebab8c0558",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+      "txHash": "0xd1ec7599bbad7ae23b5f3c69726c2b1fc1f0e8dc2a6b518533fc96177fe64669",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
+      "txHash": "0x9e703958f733e18f81fd47fb33894167d0cb5c5deb6c4a6ed7407dfa0af821a1",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x0B306BF915C4d645ff596e518fAf3F9669b97016",
+      "txHash": "0x73c194e7df2914965687f555f159043ca94f6be8272d0cc4ef65998a1c56783c",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "7d02b10fc0cd1b8ce6c969da0d707c6f6289a94869946445b09691059671623b": {
+    "16d64901d93d281e587d49c7f5d609be86dd827a24b5aeb67e997189a99328a2": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x86e72bb0f504602e8bab1e68fdcf6635ef4018eb97ff358910e8d7cd6a4764dc",
+      "txHash": "0x4a3a6e0be9e3319410c08ad667b6db57ea29aef2f2eeb82f7a4aa35a3bfc3ee2",
       "layout": {
         "storage": [
           {
@@ -101,37 +161,43 @@
             "contract": "NFTManager",
             "label": "ownerToIds",
             "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
-            "src": "contracts/NFTManager.sol:17"
+            "src": "contracts/NFTManager.sol:18"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToId",
             "type": "t_mapping(t_address,t_uint256)",
-            "src": "contracts/NFTManager.sol:18"
+            "src": "contracts/NFTManager.sol:19"
           },
           {
             "contract": "NFTManager",
             "label": "ownerToProxies",
             "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
-            "src": "contracts/NFTManager.sol:21"
+            "src": "contracts/NFTManager.sol:22"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToOwner",
             "type": "t_mapping(t_address,t_address)",
-            "src": "contracts/NFTManager.sol:22"
+            "src": "contracts/NFTManager.sol:23"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToGuildId",
-            "type": "t_mapping(t_address,t_uint256)",
-            "src": "contracts/NFTManager.sol:25"
+            "type": "t_mapping(t_address,t_bytes32)",
+            "src": "contracts/NFTManager.sol:26"
           },
           {
             "contract": "NFTManager",
-            "label": "guildIdToProxies",
-            "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)",
-            "src": "contracts/NFTManager.sol:26"
+            "label": "guildIdToProxy",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts/NFTManager.sol:27"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "guildNameToGuildId",
+            "type": "t_mapping(t_string_memory_ptr,t_bytes32)",
+            "src": "contracts/NFTManager.sol:30"
           }
         ],
         "types": {
@@ -159,8 +225,20 @@
           "t_mapping(t_address,t_address)": {
             "label": "mapping(address => address)"
           },
-          "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
-            "label": "mapping(uint256 => address[])"
+          "t_mapping(t_address,t_bytes32)": {
+            "label": "mapping(address => bytes32)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_string_memory_ptr,t_bytes32)": {
+            "label": "mapping(string => bytes32)"
+          },
+          "t_string_storage": {
+            "label": "string"
           },
           "t_array(t_uint256)49_storage": {
             "label": "uint256[49]"

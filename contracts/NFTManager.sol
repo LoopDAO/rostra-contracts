@@ -23,8 +23,11 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 	mapping(address => address) public proxyToOwner;
 
 	// guildId to proxy
-	mapping(address => uint256) public proxyToGuildId;
-	mapping(uint256 => address[]) public guildIdToProxies;
+	mapping(address => bytes32) public proxyToGuildId;
+	mapping(bytes32 => address) public guildIdToProxy;
+
+	// guildName to GuildId
+	mapping(string => bytes32) public guildNameToGuildId;
 
 	function initialize() public initializer {
 		__Ownable_init();
@@ -38,7 +41,7 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 	event MintNewNFT(address proxy, string uri, uint256 addressAmount);
 	event CreateProxy(address proxy);
 	event SetURI(address proxy, uint256 tokenId, string uri);
-	event MintExistingNFT(address _erc1155Proxy, string _uri, uint256 addressAmount);
+	event MintExistingNFT(address erc1155Proxy, string uri, uint256 addressAmount);
 
     //-------------------------------
     //------- Modifier --------------
@@ -49,11 +52,11 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 		_;
 	}
 
-    //-------------------------------
-    //------- Users Functions -------
+	//-------------------------------
+    //------- Internal Functions ----
     //-------------------------------
 
-	function createProxy() external override nonReentrant {
+	function createProxy() internal returns (address) {
 		ERC1155Proxy proxy = new ERC1155Proxy{ salt: keccak256(abi.encode(msg.sender, ownerToProxies[msg.sender].length)) }();
         proxy.initialize('');
 		proxy.setController(address(this));
@@ -62,25 +65,44 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 		proxyToOwner[address(proxy)] = msg.sender;
 
 		emit CreateProxy(address(proxy));
+		return address(proxy);
+	}
+
+    //-------------------------------
+    //------- Users Functions -------
+    //-------------------------------
+
+	function createGuild(string calldata _guildName, string calldata _uri, address[] calldata _addresses) external override nonReentrant {
+		require(guildNameToGuildId[_guildName] == bytes32(''), "NFTManager: GuildName already register");
+		bytes32 guildId = keccak256(abi.encodePacked(_guildName));
+		guildNameToGuildId[_guildName] = guildId;
+		address erc1155proxy = createProxy();
+		setGuildId(guildId, erc1155proxy);
+		if (_addresses.length > 0) {
+			mintNewNFT(guildId, _uri, _addresses);
+		}
 	}
 
 	// set guild id to proxy
-	function setGuildId(uint256 _guildId, address _erc1155Proxy) external override onlyProxyOwner(IERC1155Proxy(_erc1155Proxy)) nonReentrant {
+	function setGuildId(bytes32 _guildId, address _erc1155Proxy) public override {
+		require(proxyToOwner[_erc1155Proxy] == msg.sender, "NFTManager: Caller is not the owner");
 		proxyToGuildId[_erc1155Proxy] = _guildId;
-		guildIdToProxies[_guildId].push(_erc1155Proxy);
+		guildIdToProxy[_guildId] = _erc1155Proxy;
 	}
 
 	function mintNewNFT(
-		IERC1155Proxy _erc1155Proxy,
+		bytes32 _guildId,
 		string memory _uri,
 		address[] memory _addresses
-	) external override onlyProxyOwner(_erc1155Proxy) nonReentrant {
-		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
-		require(_addresses.length > 0, "Must supply at least one address");
+	) public override {
+		address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(_erc1155Proxy != address(0), "NFTManager: Must supply a valid NFT address");
+		require(proxyToOwner[_erc1155Proxy] == msg.sender, "NFTManager: Caller is not the owner");
+		require(_addresses.length > 0, "NFTManager: Must supply at least one address");
 
         uint256 id = proxyToId[address(_erc1155Proxy)] + 1;
-		_erc1155Proxy.mintAddresses(_addresses, id, 1, "");
-		_erc1155Proxy.setURI(id, _uri);
+		IERC1155Proxy(_erc1155Proxy).mintAddresses(_addresses, id, 1, "");
+		IERC1155Proxy(_erc1155Proxy).setURI(id, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			ownerToIds[_addresses[i]].push(id);
 		}
@@ -91,18 +113,20 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 	}
 
 	function mintExistingNFT(
-		IERC1155Proxy _erc1155Proxy,
+		bytes32 _guildId,
 		string memory _uri,
 		address[] memory _addresses
-	) external override onlyProxyOwner(_erc1155Proxy) nonReentrant {
-		require(address(_erc1155Proxy) != address(0), "Must supply a valid Proxy address");
-		require(_addresses.length > 0, "Must supply at least one address");
+	) external override nonReentrant {
+		address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(address(_erc1155Proxy) != address(0), "NFTManager: Must supply a valid Proxy address");
+		require(proxyToOwner[_erc1155Proxy] == msg.sender, "NFTManager: Caller is not the owner");
+		require(_addresses.length > 0, "NFTManager: Must supply at least one address");
 
 		uint256 _nftId = proxyToId[address(_erc1155Proxy)];
-		require(_nftId != 0, "Must supply a valid NFT address");
+		require(_nftId != 0, "NFTManager: Must supply a valid NFT address");
 
-		_erc1155Proxy.mintAddresses(_addresses, _nftId, 1, "");
-		_erc1155Proxy.setURI(_nftId, _uri);
+		IERC1155Proxy(_erc1155Proxy).mintAddresses(_addresses, _nftId, 1, "");
+		IERC1155Proxy(_erc1155Proxy).setURI(_nftId, _uri);
 		for (uint256 i = 0; i < _addresses.length; i++) {
 			ownerToIds[_addresses[i]].push(_nftId);
 		}
@@ -111,13 +135,14 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 	}
 
 	function setURI(
-		IERC1155Proxy _erc1155Proxy,
+		bytes32 _guildId,
 		uint256 _tokenId,
 		string calldata _uri
 	) external override nonReentrant {
-		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
-		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "Must the owner of proxy");
-		_erc1155Proxy.setURI(_tokenId, _uri);
+		address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(_erc1155Proxy != address(0), "NFTManager: Must supply a valid NFT address");
+		require(proxyToOwner[address(_erc1155Proxy)] == msg.sender, "NFTManager: Must the owner of proxy");
+		IERC1155Proxy(_erc1155Proxy).setURI(_tokenId, _uri);
 
 		emit SetURI(address(_erc1155Proxy), _tokenId, _uri);
 	}
@@ -126,25 +151,29 @@ contract NFTManager is INFTManager, OwnableUpgradeable, ReentrancyGuardUpgradeab
 		return ownerToIds[_user];
 	}
 
-	function getGuildIdProxies(uint256 _guildId) external override view returns (address[] memory) {
-		return guildIdToProxies[_guildId];
-	}
-
 	function getOwnerIds(address _owner) external override view returns (uint256[] memory) {
 		return ownerToIds[_owner];
 	}
 
-	function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) external override view returns (string memory) {
-		return _erc1155Proxy.uri(_tokenId);
+	function getURI(bytes32 _guildId, uint256 _tokenId) external override view returns (string memory) {
+		address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(_erc1155Proxy != address(0), "NFTManager: Must supply a valid NFT address");
+		return IERC1155Proxy(_erc1155Proxy).uri(_tokenId);
 	}
 
-	function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external override view returns (uint256 amount) {
-		require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
-		amount = _erc1155Proxy.tokenTotalSupply(_id);
+	function tokenTotalSupply(bytes32 _guildId, uint256 _id) external override view returns (uint256 amount) {
+		address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(_erc1155Proxy != address(0), "NFTManager: Must supply a valid NFT address");
+		amount = IERC1155Proxy(_erc1155Proxy).tokenTotalSupply(_id);
 	}
 
-	function tokenTotalSupplyBatch(IERC1155Proxy _erc1155Proxy, uint256[] calldata _ids) external override view returns (uint256[] memory ids) {
-        require(address(_erc1155Proxy) != address(0), "Must supply a valid NFT address");
-		ids = _erc1155Proxy.tokenTotalSupplyBatch(_ids);
+	function tokenTotalSupplyBatch(bytes32 _guildId, uint256[] calldata _ids) external override view returns (uint256[] memory ids) {
+        address _erc1155Proxy = guildIdToProxy[_guildId];
+		require(_erc1155Proxy != address(0), "NFTManager: Must supply a valid NFT address");
+		ids = IERC1155Proxy(_erc1155Proxy).tokenTotalSupplyBatch(_ids);
+	}
+
+	function stringToBytes32(string calldata _str) external view returns (bytes32) {
+		return keccak256(abi.encodePacked(_str));
 	}
 }

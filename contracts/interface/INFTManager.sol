@@ -4,39 +4,41 @@ pragma solidity ^0.8.0;
 import './IERC1155Proxy.sol';
 
 interface INFTManager {
-  function createProxy() external;
+  function createGuild(
+    string calldata _guildName,
+    string calldata _uri,
+    address[] calldata _addresses
+  ) external;
 
-  function setGuildId(uint256 _guildId, address _erc1155Proxy) external;
+  function setGuildId(bytes32 _guildId, address _erc1155Proxy) external;
 
   function mintNewNFT(
-    IERC1155Proxy _erc1155Proxy,
+    bytes32 _guildId,
     string memory _uri,
     address[] memory _addresses
   ) external;
 
   function mintExistingNFT(
-    IERC1155Proxy _erc1155Proxy,
+    bytes32 _guildId,
     string memory _uri,
     address[] memory _addresses
   ) external;
 
   function setURI(
-    IERC1155Proxy _erc1155Proxy,
+    bytes32 _guildId,
     uint256 _tokenId,
     string calldata _uri
   ) external;
 
   function getUserIds(address _user) external view returns (uint256[] memory);
 
-  function getGuildIdProxies(uint256 _guildId) external view returns (address[] memory);
-
   function getOwnerIds(address _owner) external view returns (uint256[] memory);
 
-  function getURI(IERC1155Proxy _erc1155Proxy, uint256 _tokenId) external view returns (string memory);
+  function getURI(bytes32 _guildId, uint256 _tokenId) external view returns (string memory);
 
-  function tokenTotalSupply(IERC1155Proxy _erc1155Proxy, uint256 _id) external view returns (uint256 amount);
+  function tokenTotalSupply(bytes32 _guildId, uint256 _id) external view returns (uint256 amount);
 
-  function tokenTotalSupplyBatch(IERC1155Proxy _erc1155Proxy, uint256[] calldata _ids)
+  function tokenTotalSupplyBatch(bytes32 _guildId, uint256[] calldata _ids)
     external
     view
     returns (uint256[] memory ids);
