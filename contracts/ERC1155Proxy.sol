@@ -19,8 +19,8 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
 	/// @notice ERC1155 doesn't have the concept of totalSupply onchain
 	/// so we must store that ourselves
 	mapping(uint256 => uint256) public tokenTotalSupplies;
-
 	mapping(uint256 => string) private _uris;
+	string public name;
 
 	/// @notice Perform inherited contracts' initializations
 	function initialize(string memory _uri) public override virtual initializer {
@@ -195,6 +195,11 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
 		controller = _controller;
 		emit ControllerChanged(_controller);
 	}
+
+	function setName(string memory _name) public onlyOwner {
+        name = _name;
+        emit NameChanged(_name);
+    }
 
 	///////////////////// VIEW/PURE FUNCTIONS /////////////////////
 
