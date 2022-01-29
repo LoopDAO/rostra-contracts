@@ -196,7 +196,7 @@ contract ERC1155Proxy is IERC1155Proxy, ERC1155PresetMinterPauserUpgradeable {
 		emit ControllerChanged(_controller);
 	}
 
-	function setName(string memory _name) public onlyOwner {
+	function setName(string memory _name) public override onlyOwner {
         name = _name;
         emit NameChanged(_name);
     }
