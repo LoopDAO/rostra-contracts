@@ -11,6 +11,7 @@ interface INFTManager {
   ) external;
 
   function setGuildId(bytes32 _guildId, address _erc1155Proxy) external;
+  function setNFTName(string calldata _guildName, address _erc1155Proxy) external;
 
   function mintNewNFT(
     bytes32 _guildId,

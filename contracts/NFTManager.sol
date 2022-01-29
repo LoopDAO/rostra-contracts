@@ -100,6 +100,7 @@ contract NFTManager is
         guildNameToGuildId[_guildName] = guildId;
         address erc1155proxy = createProxy();
         setGuildId(guildId, erc1155proxy);
+        setNFTName(_guildName, erc1155proxy);
         if (_addresses.length > 0) {
             mintNewNFT(guildId, _uri, _addresses);
         }
@@ -115,6 +116,14 @@ contract NFTManager is
         guildIdToProxy[_guildId] = _erc1155Proxy;
     }
 
+    // set nft name
+    function setNFTName(string memory _guildName, address _erc1155Proxy)
+        public
+		override
+        onlyProxyOwner(_erc1155Proxy)
+    {
+        IERC1155Proxy(_erc1155Proxy).setName(_guildName);
+    }
 
     function mintNewNFT(
         bytes32 _guildId,

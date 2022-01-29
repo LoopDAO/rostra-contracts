@@ -44,11 +44,14 @@ describe("NFTManager contract...", function () {
     expect(guildId).to.be.equal(gid);
 
     // alice创建一个新的1155代理
-    guildName2 = "Guild2";
+    guildName2 = "Social Wiki";
     await nftManager.connect(alice).createGuild(guildName2, "", []);
     guildId2 = await nftManager.stringToBytes32(guildName2);
     proxyAddress = await nftManager.ownerToProxies(alice.address, 0);
     expect(proxyAddress.length).to.be.equal(42);
+    let proxy_ = await new ethers.Contract(proxyAddress, erc1155proxyJson.abi, alice);
+    const proxyName = await proxy_.name();
+    expect(proxyName).to.be.equal(guildName2);
 
     // 设置并获取1155代理的公会ID
     await expect(
