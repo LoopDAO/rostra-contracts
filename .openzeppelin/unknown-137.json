@@ -39,6 +39,11 @@
       "address": "0xc35b5a30f7D0F4d924f6E892c02B506e48313e3D",
       "txHash": "0x64ac76b67fabb169afeb6f7f71c62466d54b2c81f26a1163dafe4656a22a3868",
       "kind": "transparent"
+    },
+    {
+      "address": "0x7C9B8A85E2F50894f1a84a86078108Dc5445feE8",
+      "txHash": "0x4386136d30296cb5b36f55da97be528b9c7e144c44a10c5c8a6e68ce66bb8810",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -257,6 +262,148 @@
                 "type": "t_bytes32"
               }
             ]
+          }
+        }
+      }
+    },
+    "16d64901d93d281e587d49c7f5d609be86dd827a24b5aeb67e997189a99328a2": {
+      "address": "0x75B3aC9A2a7f6e9f6ACcB8728d1B5F5DA9E4e2c6",
+      "txHash": "0x67f7a7ce05365f2f03a784ae0eab4d06d42b634d583df7f2800707c8f401f2c1",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "ownerToIds",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "src": "contracts/NFTManager.sol:18"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToId",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/NFTManager.sol:19"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "ownerToProxies",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "src": "contracts/NFTManager.sol:22"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToOwner",
+            "type": "t_mapping(t_address,t_address)",
+            "src": "contracts/NFTManager.sol:23"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToGuildId",
+            "type": "t_mapping(t_address,t_bytes32)",
+            "src": "contracts/NFTManager.sol:26"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "guildIdToProxy",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts/NFTManager.sol:27"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "guildNameToGuildId",
+            "type": "t_mapping(t_string_memory_ptr,t_bytes32)",
+            "src": "contracts/NFTManager.sol:30"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
+          },
+          "t_mapping(t_address,t_bytes32)": {
+            "label": "mapping(address => bytes32)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_string_memory_ptr,t_bytes32)": {
+            "label": "mapping(string => bytes32)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
           }
         }
       }

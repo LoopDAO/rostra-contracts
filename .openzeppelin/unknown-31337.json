@@ -7,7 +7,7 @@
       "hash": "0x10f5e2c0816d018481e05c93714d1a5b593cefe79e022eed48177ba9d10af15d",
       "type": 2,
       "accessList": [],
-      "blockHash": "0xca89624b904e09b11ecd401b4678ed8b526af66468a20ef3d2e5629250fc5a94",
+      "blockHash": "0x1be946e7bd2de7582dbf515f2d75c47b15df54d159b0d35966734fe8ffed092c",
       "blockNumber": 2,
       "transactionIndex": 0,
       "confirmations": 1,
@@ -49,11 +49,6 @@
       "kind": "transparent"
     },
     {
-      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
-      "txHash": "0xe86c99da1f6f302a2759434b0bc0bab81300de26f6c2f8790c4af05b6890722e",
-      "kind": "transparent"
-    },
-    {
       "address": "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
       "txHash": "0x01335d4123de682df64fec19a853cbfdfa5576d2b9fdc036f4480b85e60e5977",
       "kind": "transparent"
@@ -65,12 +60,17 @@
     },
     {
       "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
-      "txHash": "0xa371821268574c8b5006afbdabe3877c9cf2aa0ebaf872c61b0e3c2caba12bfe",
+      "txHash": "0x519358319cc46730307afbba5a211b862e653d15ffaa602fae5950d264073b04",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+      "txHash": "0xe6d075390a8feb6ed74d7db5f9219c01ae097d390a178916fdd883357b96349a",
       "kind": "transparent"
     },
     {
       "address": "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",
-      "txHash": "0x9be01b37c37ed17e81b516da812a196e0100c6a31db7f3078a4835eef8ac7639",
+      "txHash": "0x2b0ca6ab0c5509f16cb545fd7f47c1864ca073bd6d42b00c2c2b6e021e9f6bfc",
       "kind": "transparent"
     },
     {
@@ -110,9 +110,9 @@
     }
   ],
   "impls": {
-    "16d64901d93d281e587d49c7f5d609be86dd827a24b5aeb67e997189a99328a2": {
+    "d7374fff9d0d8d638a6f30daca13554d92367f749370fa42d5c12984247eec9a": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x4a3a6e0be9e3319410c08ad667b6db57ea29aef2f2eeb82f7a4aa35a3bfc3ee2",
+      "txHash": "0xa28832cda8a6f5c852e9eaa3addeee0638f58ea60001c7ef69145bec088370e1",
       "layout": {
         "storage": [
           {
@@ -161,43 +161,43 @@
             "contract": "NFTManager",
             "label": "ownerToIds",
             "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
-            "src": "contracts/NFTManager.sol:18"
+            "src": "contracts/NFTManager.sol:22"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToId",
             "type": "t_mapping(t_address,t_uint256)",
-            "src": "contracts/NFTManager.sol:19"
+            "src": "contracts/NFTManager.sol:23"
           },
           {
             "contract": "NFTManager",
             "label": "ownerToProxies",
             "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
-            "src": "contracts/NFTManager.sol:22"
+            "src": "contracts/NFTManager.sol:26"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToOwner",
             "type": "t_mapping(t_address,t_address)",
-            "src": "contracts/NFTManager.sol:23"
+            "src": "contracts/NFTManager.sol:27"
           },
           {
             "contract": "NFTManager",
             "label": "proxyToGuildId",
             "type": "t_mapping(t_address,t_bytes32)",
-            "src": "contracts/NFTManager.sol:26"
+            "src": "contracts/NFTManager.sol:30"
           },
           {
             "contract": "NFTManager",
             "label": "guildIdToProxy",
             "type": "t_mapping(t_bytes32,t_address)",
-            "src": "contracts/NFTManager.sol:27"
+            "src": "contracts/NFTManager.sol:31"
           },
           {
             "contract": "NFTManager",
             "label": "guildNameToGuildId",
             "type": "t_mapping(t_string_memory_ptr,t_bytes32)",
-            "src": "contracts/NFTManager.sol:30"
+            "src": "contracts/NFTManager.sol:34"
           }
         ],
         "types": {
