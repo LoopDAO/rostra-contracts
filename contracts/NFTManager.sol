@@ -216,6 +216,15 @@ contract NFTManager is
         return ownerToIds[_owner];
     }
 
+    function getOwnerProxies(address _owner)
+        external
+        view
+        override
+        returns (address[] memory)
+    {
+        return ownerToProxies[_owner];
+    }
+
     function getURI(bytes32 _guildId, uint256 _tokenId)
         external
         view
