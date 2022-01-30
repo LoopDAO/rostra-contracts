@@ -94,7 +94,7 @@ contract NFTManager is
     ) external override nonReentrant {
         require(
             guildNameToGuildId[_guildName] == bytes32(""),
-            "NFTManager: GuildName already register"
+            "NFTManager::createGuild: GuildName already exists"
         );
         bytes32 guildId = keccak256(abi.encodePacked(_guildName));
         guildNameToGuildId[_guildName] = guildId;

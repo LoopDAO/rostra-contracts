@@ -24,7 +24,7 @@ describe("NFTManager contract...", function () {
   it("should be able to create guild repeat with revert", async () => {
     await expect(nftManager.createGuild("Guild", "", []))
     await expect(nftManager.createGuild("Guild", "", []))
-      .to.be.revertedWith('NFTManager: GuildName already register');
+      .to.be.revertedWith('NFTManager::createGuild: GuildName already exists');
   })
 
   it("should be able to create a new Guild", async function () {
