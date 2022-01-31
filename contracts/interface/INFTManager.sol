@@ -36,6 +36,8 @@ interface INFTManager {
 
   function getOwnerIds(address _owner) external view returns (uint256[] memory);
 
+  function getOwnerProxies(address _owner) external view returns (address[] memory);
+
   function getURI(bytes32 _guildId, uint256 _tokenId) external view returns (string memory);
 
   function tokenTotalSupply(bytes32 _guildId, uint256 _id) external view returns (uint256 amount);

@@ -1,5 +1,6 @@
 const { expect } = require("chai")
 const { ethers } = require("hardhat")
+const ZERO_GUILD_ID = '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 describe("NFTManager contract...", function () {
   let nftManager;
@@ -24,7 +25,7 @@ describe("NFTManager contract...", function () {
   it("should be able to create guild repeat with revert", async () => {
     await expect(nftManager.createGuild("Guild", "", []))
     await expect(nftManager.createGuild("Guild", "", []))
-      .to.be.revertedWith('NFTManager: GuildName already register');
+      .to.be.revertedWith('NFTManager::createGuild: GuildName already exists');
   })
 
   it("should be able to create a new Guild", async function () {
@@ -136,6 +137,25 @@ describe("NFTManager contract...", function () {
 
     expect((await nftManager.getUserIds(alice.address)).length).to.equal(2)
     expect((await nftManager.getUserIds(bob.address)).length).to.equal(1)
+    expect((await nftManager.getUserIds(owner.address)).length).to.equal(0)
+  })
+
+  it("create 2 guilds", async () => {
+    const guildName1 = "Guild1";
+    const guildName2 = "Guild2";
+    await nftManager.createGuild(guildName1, "ipfs://test", [alice.address, bob.address]);
+    await nftManager.createGuild(guildName2, "ipfs://test", [alice.address, bob.address]);
+    const guildId1 = await nftManager.guildNameToGuildId(guildName1);
+    const guildId2 = await nftManager.guildNameToGuildId(guildName2);
+    const proxy1 = await nftManager.guildIdToProxy(guildId1);
+    const proxy2 = await nftManager.guildIdToProxy(guildId2);
+    const proxies = await nftManager.getOwnerProxies(owner.address);
+    expect(proxies.length).to.equal(2);
+    expect(proxy1).to.equal(proxies[0]);
+    expect(proxy2).to.equal(proxies[1]);
+
+    expect((await nftManager.getUserIds(alice.address)).length).to.equal(2)
+    expect((await nftManager.getUserIds(bob.address)).length).to.equal(2)
     expect((await nftManager.getUserIds(owner.address)).length).to.equal(0)
   })
 })

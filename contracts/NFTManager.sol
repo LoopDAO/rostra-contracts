@@ -94,7 +94,7 @@ contract NFTManager is
     ) external override nonReentrant {
         require(
             guildNameToGuildId[_guildName] == bytes32(""),
-            "NFTManager: GuildName already register"
+            "NFTManager::createGuild: GuildName already exists"
         );
         bytes32 guildId = keccak256(abi.encodePacked(_guildName));
         guildNameToGuildId[_guildName] = guildId;
@@ -214,6 +214,15 @@ contract NFTManager is
         returns (uint256[] memory)
     {
         return ownerToIds[_owner];
+    }
+
+    function getOwnerProxies(address _owner)
+        external
+        view
+        override
+        returns (address[] memory)
+    {
+        return ownerToProxies[_owner];
     }
 
     function getURI(bytes32 _guildId, uint256 _tokenId)

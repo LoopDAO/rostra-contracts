@@ -44,6 +44,11 @@
       "address": "0x7C9B8A85E2F50894f1a84a86078108Dc5445feE8",
       "txHash": "0x4386136d30296cb5b36f55da97be528b9c7e144c44a10c5c8a6e68ce66bb8810",
       "kind": "transparent"
+    },
+    {
+      "address": "0xEdb210B003bdd4Ee75229Aea840ED0Ff3C5C314C",
+      "txHash": "0xec9bc09cefcef8de5e18e3f90e889f4efff1fc9955428fd3a610e93fcd63fc7f",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -354,6 +359,148 @@
             "label": "guildNameToGuildId",
             "type": "t_mapping(t_string_memory_ptr,t_bytes32)",
             "src": "contracts/NFTManager.sol:30"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(address => uint256[])"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+            "label": "mapping(address => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_address,t_address)": {
+            "label": "mapping(address => address)"
+          },
+          "t_mapping(t_address,t_bytes32)": {
+            "label": "mapping(address => bytes32)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_string_memory_ptr,t_bytes32)": {
+            "label": "mapping(string => bytes32)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "d7374fff9d0d8d638a6f30daca13554d92367f749370fa42d5c12984247eec9a": {
+      "address": "0xDcCeaE654f60f3863634Ed0089eC422FAfcFC699",
+      "txHash": "0x4d1a9fdcbb8b00de31726ae61d3d76a4903d2ce10383f33b8346b83333f6b7c9",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "contract": "ContextUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:31"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "_owner",
+            "type": "t_address",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "contract": "OwnableUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:82"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "_status",
+            "type": "t_uint256",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
+          },
+          {
+            "contract": "ReentrancyGuardUpgradeable",
+            "label": "__gap",
+            "type": "t_array(t_uint256)49_storage",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:68"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "ownerToIds",
+            "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)",
+            "src": "contracts/NFTManager.sol:22"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToId",
+            "type": "t_mapping(t_address,t_uint256)",
+            "src": "contracts/NFTManager.sol:23"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "ownerToProxies",
+            "type": "t_mapping(t_address,t_array(t_address)dyn_storage)",
+            "src": "contracts/NFTManager.sol:26"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToOwner",
+            "type": "t_mapping(t_address,t_address)",
+            "src": "contracts/NFTManager.sol:27"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "proxyToGuildId",
+            "type": "t_mapping(t_address,t_bytes32)",
+            "src": "contracts/NFTManager.sol:30"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "guildIdToProxy",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts/NFTManager.sol:31"
+          },
+          {
+            "contract": "NFTManager",
+            "label": "guildNameToGuildId",
+            "type": "t_mapping(t_string_memory_ptr,t_bytes32)",
+            "src": "contracts/NFTManager.sol:34"
           }
         ],
         "types": {
