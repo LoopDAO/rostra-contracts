@@ -1,66 +1,228 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
-import "hardhat/console.sol";
 
-/// @title RedPacket_ERC1155
-/// @author Rostra
-contract RedPacket_ERC1155 is Initializable {
+contract HappyRedPacket is Initializable {
+    using SafeMath for uint256;
+
     struct RedPacket {
-        address creator;
-        uint16 remaining_tokens;
-        address token_addr;
-        uint32 end_time;
-        uint256[] erc721_list;
-        address public_key;
-        uint256 bit_status; //0 - available 1 - not available
+        Packed packed;
         mapping(address => uint256) claimed_list;
+        address public_key;
+        address creator;
     }
 
+    struct Packed {
+        uint256 packed1; // 0 (128) total_tokens (96) expire_time(32)
+        uint256 packed2; // 0 (64) token_addr (160) claimed_numbers(15) total_numbers(15) token_type(1) ifrandom(1)
+    }
+
+    event CreationSuccess(
+        uint256 total,
+        bytes32 id,
+        string name,
+        string message,
+        address creator,
+        uint256 creation_time,
+        address token_address,
+        uint256 number,
+        bool ifrandom,
+        uint256 duration
+    );
+
+    event ClaimSuccess(
+        bytes32 id,
+        address claimer,
+        uint256 claimed_value,
+        address token_address
+    );
+
+    event RefundSuccess(
+        bytes32 id,
+        address token_address,
+        uint256 remaining_balance
+    );
+
+    using SafeERC20 for IERC20;
     uint32 nonce;
+    mapping(bytes32 => RedPacket) redpacket_by_id;
     bytes32 private seed;
-    mapping(bytes32 => RedPacket) public redpacket_by_id;
+    uint256 constant MASK =
+        0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
 
     function initialize() public initializer {
         seed = keccak256(
             abi.encodePacked(
-                "RedPacket for ERC1155",
+                "Former NBA Commissioner David St",
                 block.timestamp,
                 msg.sender
             )
         );
     }
 
-    //-------------------------------
-    //------- Events ----------------
-    //-------------------------------
+    // Inits a red packet instance
+    // _token_type: 0 - ETH  1 - ERC20
+    function create_red_packet(
+        address _public_key,
+        uint256 _number,
+        bool _ifrandom,
+        uint256 _duration,
+        bytes32 _seed,
+        string memory _message,
+        string memory _name,
+        uint256 _token_type,
+        address _token_addr,
+        uint256 _total_tokens
+    ) public payable {
+        nonce++;
+        require(_total_tokens >= _number, "#tokens > #packets");
+        require(_number > 0, "At least 1 recipient");
+        require(_number < 256, "At most 255 recipients");
+        require(
+            _token_type == 0 || _token_type == 1,
+            "Unrecognizable token type"
+        );
 
-    event CreationSuccess(
-        uint256 total_tokens,
-        bytes32 indexed id,
-        string name,
-        string message,
-        address indexed creator,
-        uint256 creation_time,
-        address token_address,
-        uint256 packet_number,
-        uint256 duration,
-        uint256[] token_ids
-    );
+        uint256 received_amount = _total_tokens;
+        if (_token_type == 0)
+            require(msg.value >= _total_tokens, "No enough ETH");
+        else if (_token_type == 1) {
+            // https://github.com/DimensionDev/Maskbook/issues/4168
+            // `received_amount` is not necessarily equal to `_total_tokens`
+            uint256 balance_before_transfer = IERC20(_token_addr).balanceOf(
+                address(this)
+            );
+            IERC20(_token_addr).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _total_tokens
+            );
+            uint256 balance_after_transfer = IERC20(_token_addr).balanceOf(
+                address(this)
+            );
+            received_amount = balance_after_transfer.sub(
+                balance_before_transfer
+            );
+            require(received_amount >= _number, "#received > #packets");
+        }
 
-    event ClaimSuccess(
-        bytes32 indexed id,
-        address indexed claimer,
-        uint256 claimed_token_id,
-        address token_address
-    );
+        bytes32 _id = keccak256(
+            abi.encodePacked(msg.sender, block.timestamp, nonce, seed, _seed)
+        );
+        {
+            uint256 _random_type = _ifrandom ? 1 : 0;
+            RedPacket storage redp = redpacket_by_id[_id];
+            redp.packed.packed1 = wrap1(received_amount, _duration);
+            redp.packed.packed2 = wrap2(
+                _token_addr,
+                _number,
+                _token_type,
+                _random_type
+            );
+            redp.public_key = _public_key;
+            redp.creator = msg.sender;
+        }
+        {
+            // as a workaround for "CompilerError: Stack too deep, try removing local variables"
+            uint256 number = _number;
+            bool ifrandom = _ifrandom;
+            uint256 duration = _duration;
+            emit CreationSuccess(
+                received_amount,
+                _id,
+                _name,
+                _message,
+                msg.sender,
+                block.timestamp,
+                _token_addr,
+                number,
+                ifrandom,
+                duration
+            );
+        }
+    }
 
-    //-------------------------------
-    //------- Internal Functions ----
-    //-------------------------------
+    // It takes the signed msg.sender message as verification passcode
+    function claim(
+        bytes32 id,
+        bytes memory signedMsg,
+        address payable recipient
+    ) public returns (uint256 claimed) {
+        RedPacket storage rp = redpacket_by_id[id];
+        Packed memory packed = rp.packed;
+        // Unsuccessful
+        require(unbox(packed.packed1, 224, 32) > block.timestamp, "Expired");
+        uint256 total_number = unbox(packed.packed2, 239, 15);
+        uint256 claimed_number = unbox(packed.packed2, 224, 15);
+        require(claimed_number < total_number, "Out of stock");
+
+        address public_key = rp.public_key;
+        require(_verify(signedMsg, public_key), "Verification failed");
+
+        uint256 claimed_tokens;
+        uint256 token_type = unbox(packed.packed2, 254, 1);
+        uint256 ifrandom = unbox(packed.packed2, 255, 1);
+        uint256 remaining_tokens = unbox(packed.packed1, 128, 96);
+        if (ifrandom == 1) {
+            if (total_number - claimed_number == 1)
+                claimed_tokens = remaining_tokens;
+            else
+                claimed_tokens =
+                    random(seed, nonce) %
+                    SafeMath.div(
+                        SafeMath.mul(remaining_tokens, 2),
+                        total_number - claimed_number
+                    );
+            if (claimed_tokens == 0) claimed_tokens = 1;
+        } else {
+            if (total_number - claimed_number == 1)
+                claimed_tokens = remaining_tokens;
+            else
+                claimed_tokens = SafeMath.div(
+                    remaining_tokens,
+                    (total_number - claimed_number)
+                );
+        }
+        rp.packed.packed1 = rewriteBox(
+            packed.packed1,
+            128,
+            96,
+            remaining_tokens - claimed_tokens
+        );
+
+        // Penalize greedy attackers by placing duplication check at the very last
+        require(rp.claimed_list[msg.sender] == 0, "Already claimed");
+
+        rp.claimed_list[msg.sender] = claimed_tokens;
+        rp.packed.packed2 = rewriteBox(
+            packed.packed2,
+            224,
+            15,
+            claimed_number + 1
+        );
+
+        // Transfer the red packet after state changing
+        if (token_type == 0) recipient.transfer(claimed_tokens);
+        else if (token_type == 1)
+            transferToken(
+                address(uint160(unbox(packed.packed2, 64, 160))),
+                recipient,
+                claimed_tokens
+            );
+        // Claim success event
+        emit ClaimSuccess(
+            id,
+            recipient,
+            claimed_tokens,
+            address(uint160(unbox(packed.packed2, 64, 160)))
+        );
+        return claimed_tokens;
+    }
 
     // as a workaround for "CompilerError: Stack too deep, try removing local variables"
     function _verify(bytes memory signedMsg, address public_key)
@@ -74,65 +236,146 @@ contract RedPacket_ERC1155 is Initializable {
         return (calculated_public_key == public_key);
     }
 
-    function _getTokenIndex(
-        uint256[] storage erc721_token_id_list,
-        uint16 remaining_tokens,
-        address token_addr,
-        address creator,
-        uint256 bit_status
-    )
-        private
+    // Returns 1. remaining value 2. total number of red packets 3. claimed number of red packets
+    function check_availability(bytes32 id)
+        external
         view
         returns (
-            uint256 index,
-            uint256 claimed_token_id,
-            uint256 new_bit_status,
-            uint16 new_remaining_tokens
+            address token_address,
+            uint256 balance,
+            uint256 total,
+            uint256 claimed,
+            bool expired,
+            uint256 claimed_amount
         )
     {
-        uint256 claimed_index = random(seed, nonce) % (remaining_tokens);
-        uint16 real_index = _get_exact_index(bit_status, claimed_index);
-        claimed_token_id = erc721_token_id_list[real_index];
-        if (IERC721(token_addr).ownerOf(claimed_token_id) != creator) {
-            for (uint16 i = 0; i < erc721_token_id_list.length; i++) {
-                if ((bit_status & (1 << i)) != 0) {
-                    continue;
-                }
-                if (
-                    IERC721(token_addr).ownerOf(erc721_token_id_list[i]) !=
-                    creator
-                ) {
-                    // update bit map
-                    bit_status = bit_status | (1 << i);
-                    remaining_tokens--;
-                    require(remaining_tokens > 0, "No available token remain");
-                    continue;
-                } else {
-                    claimed_token_id = erc721_token_id_list[i];
-                    real_index = i;
-                    break;
-                }
-            }
-        }
-        return (real_index, claimed_token_id, bit_status, remaining_tokens);
+        RedPacket storage rp = redpacket_by_id[id];
+        Packed memory packed = rp.packed;
+        return (
+            address(uint160(unbox(packed.packed2, 64, 160))),
+            unbox(packed.packed1, 128, 96),
+            unbox(packed.packed2, 239, 15),
+            unbox(packed.packed2, 224, 15),
+            block.timestamp > unbox(packed.packed1, 224, 32),
+            rp.claimed_list[msg.sender]
+        );
     }
 
-    function _get_exact_index(uint256 bit_status, uint256 claimed_index)
-        private
-        pure
-        returns (uint16 real_index)
-    {
-        uint16 real_count = 0;
-        uint16 count = uint16(claimed_index + 1);
-        while (count > 0) {
-            if ((bit_status & 1) == 0) {
-                count--;
-            }
-            real_count++;
-            bit_status = bit_status >> 1;
+    function refund(bytes32 id) public {
+        RedPacket storage rp = redpacket_by_id[id];
+        Packed memory packed = rp.packed;
+        address creator = rp.creator;
+        require(creator == msg.sender, "Creator Only");
+        require(
+            unbox(packed.packed1, 224, 32) <= block.timestamp,
+            "Not expired yet"
+        );
+        uint256 remaining_tokens = unbox(packed.packed1, 128, 96);
+        require(remaining_tokens != 0, "None left in the red packet");
+
+        uint256 token_type = unbox(packed.packed2, 254, 1);
+        address token_address = address(
+            uint160(unbox(packed.packed2, 64, 160))
+        );
+
+        rp.packed.packed1 = rewriteBox(packed.packed1, 128, 96, 0);
+
+        if (token_type == 0) {
+            payable(msg.sender).transfer(remaining_tokens);
+        } else if (token_type == 1) {
+            transferToken(token_address, msg.sender, remaining_tokens);
         }
 
-        return real_count - 1;
+        emit RefundSuccess(id, token_address, remaining_tokens);
+    }
+
+    /**
+     * position      position in a memory block
+     * size          data size
+     * data          data
+     * box() inserts the data in a 256bit word with the given position and returns it
+     * data is checked by validRange() to make sure it is not over size
+     **/
+
+    function box(
+        uint16 position,
+        uint16 size,
+        uint256 data
+    ) internal pure returns (uint256 boxed) {
+        require(validRange(size, data), "Value out of range BOX");
+        assembly {
+            // data << position
+            boxed := shl(position, data)
+        }
+    }
+
+    /**
+     * position      position in a memory block
+     * size          data size
+     * base          base data
+     * unbox() extracts the data out of a 256bit word with the given position and returns it
+     * base is checked by validRange() to make sure it is not over size
+     **/
+
+    function unbox(
+        uint256 base,
+        uint16 position,
+        uint16 size
+    ) internal pure returns (uint256 unboxed) {
+        require(validRange(256, base), "Value out of range UNBOX");
+        assembly {
+            // (((1 << size) - 1) & base >> position)
+            unboxed := and(sub(shl(size, 1), 1), shr(position, base))
+        }
+    }
+
+    /**
+     * size          data size
+     * data          data
+     * validRange()  checks if the given data is over the specified data size
+     **/
+
+    function validRange(uint16 size, uint256 data)
+        internal
+        pure
+        returns (bool ifValid)
+    {
+        assembly {
+            // 2^size > data or size ==256
+            ifValid := or(eq(size, 256), gt(shl(size, 1), data))
+        }
+    }
+
+    /**
+     * _box          32byte data to be modified
+     * position      position in a memory block
+     * size          data size
+     * data          data to be inserted
+     * rewriteBox() updates a 32byte word with a data at the given position with the specified size
+     **/
+
+    function rewriteBox(
+        uint256 _box,
+        uint16 position,
+        uint16 size,
+        uint256 data
+    ) internal pure returns (uint256 boxed) {
+        assembly {
+            // mask = ~((1 << size - 1) << position)
+            // _box = (mask & _box) | ()data << position)
+            boxed := or(
+                and(_box, not(shl(position, sub(shl(size, 1), 1)))),
+                shl(position, data)
+            )
+        }
+    }
+
+    function transferToken(
+        address token_address,
+        address recipient_address,
+        uint256 amount
+    ) internal {
+        IERC20(token_address).safeTransfer(recipient_address, amount);
     }
 
     // A boring wrapper
@@ -154,174 +397,29 @@ contract RedPacket_ERC1155 is Initializable {
             ) + 1;
     }
 
-    //-------------------------------
-    //------- Users Functions -------
-    //-------------------------------
-
-    // Remember to call checkOwnership() before createRedPacket()
-    function checkOwnership(
-        uint256[] memory erc721_token_id_list,
-        address token_addr
-    ) external view returns (bool is_your_token) {
-        is_your_token = true;
-        for (uint256 i = 0; i < erc721_token_id_list.length; i++) {
-            address owner = IERC721(token_addr).ownerOf(
-                erc721_token_id_list[i]
-            );
-            if (owner != msg.sender) {
-                is_your_token = false;
-                break;
-            }
-        }
-        return is_your_token;
+    function wrap1(uint256 _total_tokens, uint256 _duration)
+        internal
+        view
+        returns (uint256 packed1)
+    {
+        uint256 _packed1 = 0;
+        _packed1 |= box(128, 96, _total_tokens); // total tokens = 80 bits = ~8 * 10^10 18 decimals
+        _packed1 |= box(224, 32, (block.timestamp + _duration)); // expiration_time = 32 bits (until 2106)
+        return _packed1;
     }
 
-    function createRedPacket(
-        address _public_key,
-        uint64 _duration,
-        bytes32 _seed,
-        string memory _message,
-        string memory _name,
+    function wrap2(
         address _token_addr,
-        uint256[] memory _erc721_token_ids
-    ) external {
-        nonce++;
-        require(_erc721_token_ids.length > 0, "At least 1 recipient");
-        require(_erc721_token_ids.length <= 256, "At most 256 recipient");
-        require(
-            IERC721(_token_addr).isApprovedForAll(msg.sender, address(this)),
-            "No approved yet"
-        );
-
-        bytes32 packet_id = keccak256(
-            abi.encodePacked(msg.sender, block.timestamp, nonce, seed, _seed)
-        );
-        {
-            RedPacket storage rp = redpacket_by_id[packet_id];
-            rp.creator = msg.sender;
-            rp.remaining_tokens = uint16(_erc721_token_ids.length);
-            rp.token_addr = _token_addr;
-            rp.end_time = uint32(block.timestamp + _duration);
-            rp.erc721_list = _erc721_token_ids;
-            rp.public_key = _public_key;
-        }
-        {
-            uint256 number = _erc721_token_ids.length;
-            uint256 duration = _duration;
-            emit CreationSuccess(
-                _erc721_token_ids.length,
-                packet_id,
-                _name,
-                _message,
-                msg.sender,
-                block.timestamp,
-                _token_addr,
-                number,
-                duration,
-                _erc721_token_ids
-            );
-        }
-    }
-
-    function claim(
-        bytes32 pkt_id,
-        bytes memory signedMsg,
-        address payable recipient
-    ) external returns (uint256 claimed) {
-        RedPacket storage rp = redpacket_by_id[pkt_id];
-        uint256[] storage erc721_token_id_list = rp.erc721_list;
-        require(rp.end_time > block.timestamp, "Expired");
-        // require(_verify(signedMsg, rp.public_key), "verification failed");
-        uint16 remaining_tokens = rp.remaining_tokens;
-        require(remaining_tokens > 0, "No available token remain");
-
-        uint256 claimed_index;
-        uint256 claimed_token_id;
-        uint256 new_bit_status;
-        uint16 new_remaining_tokens;
-        (
-            claimed_index,
-            claimed_token_id,
-            new_bit_status,
-            new_remaining_tokens
-        ) = _getTokenIndex(
-            erc721_token_id_list,
-            remaining_tokens,
-            rp.token_addr,
-            rp.creator,
-            rp.bit_status
-        );
-
-        rp.bit_status = new_bit_status | (1 << claimed_index);
-        rp.remaining_tokens = new_remaining_tokens - 1;
-
-        // Penalize greedy attackers by placing duplication check at the very last
-        require(rp.claimed_list[msg.sender] == 0, "Already claimed");
-        rp.claimed_list[msg.sender] = claimed_token_id;
-        address token_addr = rp.token_addr;
-
-        // TODO NftManager mint mintExistingNFT to user
-        IERC721(token_addr).safeTransferFrom(
-            rp.creator,
-            recipient,
-            claimed_token_id
-        );
-
-        emit ClaimSuccess(
-            pkt_id,
-            address(recipient),
-            claimed_token_id,
-            token_addr
-        );
-        return claimed_token_id;
-    }
-
-    function checkAvailability(bytes32 pkt_id)
-        external
-        view
-        returns (
-            address token_address,
-            uint16 balance,
-            uint256 total_pkts,
-            bool expired,
-            uint256 claimed_id,
-            uint256 bit_status
-        )
-    {
-        RedPacket storage rp = redpacket_by_id[pkt_id];
-        return (
-            rp.token_addr,
-            rp.remaining_tokens,
-            rp.erc721_list.length,
-            block.timestamp > rp.end_time,
-            rp.claimed_list[msg.sender],
-            rp.bit_status
-        );
-    }
-
-    function checkClaimedId(bytes32 id)
-        external
-        view
-        returns (uint256 claimed_token_id)
-    {
-        RedPacket storage rp = redpacket_by_id[id];
-        claimed_token_id = rp.claimed_list[msg.sender];
-        return claimed_token_id;
-    }
-
-    function checkErc721RemainIds(bytes32 id)
-        external
-        view
-        returns (uint256 bit_status, uint256[] memory erc721_token_ids)
-    {
-        RedPacket storage rp = redpacket_by_id[id];
-        erc721_token_ids = rp.erc721_list;
-        // use bit_status to get remained token id in erc_721_token_ids
-        return (rp.bit_status, erc721_token_ids);
-    }
-
-    function toEthSignMessage() public view returns (bytes32) {
-        bytes32 prefixedHash = keccak256(abi.encodePacked(msg.sender));
-        return prefixedHash;
+        uint256 _number,
+        uint256 _token_type,
+        uint256 _ifrandom
+    ) internal pure returns (uint256 packed2) {
+        uint256 _packed2 = 0;
+        _packed2 |= box(64, 160, uint160(_token_addr)); // token_address = 160 bits
+        _packed2 |= box(224, 15, 0); // claimed_number = 14 bits 16384
+        _packed2 |= box(239, 15, _number); // total_number = 14 bits 16384
+        _packed2 |= box(254, 1, _token_type); // token_type = 1 bit 2
+        _packed2 |= box(255, 1, _ifrandom); // ifrandom = 1 bit 2
+        return _packed2;
     }
 }
