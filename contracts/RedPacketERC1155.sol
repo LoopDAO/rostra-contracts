@@ -5,15 +5,15 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "hardhat/console.sol";
+
 /// @title RedPacket_ERC1155
 /// @author Rostra
 contract RedPacket_ERC1155 is Initializable {
-
     struct RedPacket {
         address creator;
         uint16 remaining_tokens;
         address token_addr;
-        uint32 end_time; 
+        uint32 end_time;
         uint256[] erc721_list;
         address public_key;
         uint256 bit_status; //0 - available 1 - not available
@@ -25,14 +25,20 @@ contract RedPacket_ERC1155 is Initializable {
     mapping(bytes32 => RedPacket) public redpacket_by_id;
 
     function initialize() public initializer {
-        seed = keccak256(abi.encodePacked("Rostra Guild RedPacket ERC721", block.timestamp, msg.sender));
+        seed = keccak256(
+            abi.encodePacked(
+                "RedPacket for ERC1155",
+                block.timestamp,
+                msg.sender
+            )
+        );
     }
 
     //-------------------------------
     //------- Events ----------------
     //-------------------------------
-    
-    event CreationSuccess (
+
+    event CreationSuccess(
         uint256 total_tokens,
         bytes32 indexed id,
         string name,
@@ -57,7 +63,11 @@ contract RedPacket_ERC1155 is Initializable {
     //-------------------------------
 
     // as a workaround for "CompilerError: Stack too deep, try removing local variables"
-    function _verify(bytes memory signedMsg, address public_key) private view returns (bool verified) {
+    function _verify(bytes memory signedMsg, address public_key)
+        private
+        view
+        returns (bool verified)
+    {
         bytes memory prefix = "\x19Ethereum Signed Message:\n20";
         bytes32 prefixedHash = keccak256(abi.encodePacked(prefix, msg.sender));
         address calculated_public_key = ECDSA.recover(prefixedHash, signedMsg);
@@ -71,8 +81,9 @@ contract RedPacket_ERC1155 is Initializable {
         address creator,
         uint256 bit_status
     )
-        private view
-        returns(
+        private
+        view
+        returns (
             uint256 index,
             uint256 claimed_token_id,
             uint256 new_bit_status,
@@ -82,12 +93,15 @@ contract RedPacket_ERC1155 is Initializable {
         uint256 claimed_index = random(seed, nonce) % (remaining_tokens);
         uint16 real_index = _get_exact_index(bit_status, claimed_index);
         claimed_token_id = erc721_token_id_list[real_index];
-        if(IERC721(token_addr).ownerOf(claimed_token_id) != creator) {
+        if (IERC721(token_addr).ownerOf(claimed_token_id) != creator) {
             for (uint16 i = 0; i < erc721_token_id_list.length; i++) {
                 if ((bit_status & (1 << i)) != 0) {
                     continue;
                 }
-                if (IERC721(token_addr).ownerOf(erc721_token_id_list[i]) != creator) {
+                if (
+                    IERC721(token_addr).ownerOf(erc721_token_id_list[i]) !=
+                    creator
+                ) {
                     // update bit map
                     bit_status = bit_status | (1 << i);
                     remaining_tokens--;
@@ -100,29 +114,44 @@ contract RedPacket_ERC1155 is Initializable {
                 }
             }
         }
-        return(real_index, claimed_token_id, bit_status, remaining_tokens);
+        return (real_index, claimed_token_id, bit_status, remaining_tokens);
     }
 
     function _get_exact_index(uint256 bit_status, uint256 claimed_index)
-        private pure 
+        private
+        pure
         returns (uint16 real_index)
     {
         uint16 real_count = 0;
         uint16 count = uint16(claimed_index + 1);
-        while (count > 0){
-            if ((bit_status & 1) == 0){
-                count --;
+        while (count > 0) {
+            if ((bit_status & 1) == 0) {
+                count--;
             }
-            real_count ++;
-            bit_status = bit_status >> 1;  
+            real_count++;
+            bit_status = bit_status >> 1;
         }
-        
+
         return real_count - 1;
     }
 
     // A boring wrapper
-    function random(bytes32 _seed, uint32 nonce_rand) internal view returns (uint256 rand) {
-        return uint256(keccak256(abi.encodePacked(nonce_rand, msg.sender, _seed, block.timestamp))) + 1 ;
+    function random(bytes32 _seed, uint32 nonce_rand)
+        internal
+        view
+        returns (uint256 rand)
+    {
+        return
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        nonce_rand,
+                        msg.sender,
+                        _seed,
+                        block.timestamp
+                    )
+                )
+            ) + 1;
     }
 
     //-------------------------------
@@ -130,13 +159,15 @@ contract RedPacket_ERC1155 is Initializable {
     //-------------------------------
 
     // Remember to call checkOwnership() before createRedPacket()
-    function checkOwnership(uint256[] memory erc721_token_id_list, address token_addr)
-        external view 
-        returns(bool is_your_token)
-    {
+    function checkOwnership(
+        uint256[] memory erc721_token_id_list,
+        address token_addr
+    ) external view returns (bool is_your_token) {
         is_your_token = true;
-        for (uint256 i= 0; i < erc721_token_id_list.length; i++) {
-            address owner = IERC721(token_addr).ownerOf(erc721_token_id_list[i]);
+        for (uint256 i = 0; i < erc721_token_id_list.length; i++) {
+            address owner = IERC721(token_addr).ownerOf(
+                erc721_token_id_list[i]
+            );
             if (owner != msg.sender) {
                 is_your_token = false;
                 break;
@@ -152,17 +183,19 @@ contract RedPacket_ERC1155 is Initializable {
         string memory _message,
         string memory _name,
         address _token_addr,
-
         uint256[] memory _erc721_token_ids
-    )
-        external
-    {
-        nonce ++;
+    ) external {
+        nonce++;
         require(_erc721_token_ids.length > 0, "At least 1 recipient");
         require(_erc721_token_ids.length <= 256, "At most 256 recipient");
-        require(IERC721(_token_addr).isApprovedForAll(msg.sender, address(this)), "No approved yet");
+        require(
+            IERC721(_token_addr).isApprovedForAll(msg.sender, address(this)),
+            "No approved yet"
+        );
 
-        bytes32 packet_id = keccak256(abi.encodePacked(msg.sender, block.timestamp, nonce, seed, _seed));
+        bytes32 packet_id = keccak256(
+            abi.encodePacked(msg.sender, block.timestamp, nonce, seed, _seed)
+        );
         {
             RedPacket storage rp = redpacket_by_id[packet_id];
             rp.creator = msg.sender;
@@ -175,28 +208,29 @@ contract RedPacket_ERC1155 is Initializable {
         {
             uint256 number = _erc721_token_ids.length;
             uint256 duration = _duration;
-            emit CreationSuccess (
-                _erc721_token_ids.length, 
-                packet_id, 
+            emit CreationSuccess(
+                _erc721_token_ids.length,
+                packet_id,
                 _name,
-                _message, 
-                msg.sender, 
-                block.timestamp, 
-                _token_addr, 
-                number, 
-                duration, 
+                _message,
+                msg.sender,
+                block.timestamp,
+                _token_addr,
+                number,
+                duration,
                 _erc721_token_ids
             );
         }
     }
 
-    function claim(bytes32 pkt_id, bytes memory signedMsg, address payable recipient)
-        external 
-        returns (uint256 claimed)
-    {
+    function claim(
+        bytes32 pkt_id,
+        bytes memory signedMsg,
+        address payable recipient
+    ) external returns (uint256 claimed) {
         RedPacket storage rp = redpacket_by_id[pkt_id];
         uint256[] storage erc721_token_id_list = rp.erc721_list;
-        require(rp.end_time > block.timestamp, "Expired"); 
+        require(rp.end_time > block.timestamp, "Expired");
         // require(_verify(signedMsg, rp.public_key), "verification failed");
         uint16 remaining_tokens = rp.remaining_tokens;
         require(remaining_tokens > 0, "No available token remain");
@@ -206,19 +240,19 @@ contract RedPacket_ERC1155 is Initializable {
         uint256 new_bit_status;
         uint16 new_remaining_tokens;
         (
-            claimed_index, 
+            claimed_index,
             claimed_token_id,
-            new_bit_status, 
+            new_bit_status,
             new_remaining_tokens
         ) = _getTokenIndex(
-            erc721_token_id_list, 
-            remaining_tokens, 
-            rp.token_addr, 
+            erc721_token_id_list,
+            remaining_tokens,
+            rp.token_addr,
             rp.creator,
             rp.bit_status
         );
 
-        rp.bit_status  = new_bit_status | (1 << claimed_index);
+        rp.bit_status = new_bit_status | (1 << claimed_index);
         rp.remaining_tokens = new_remaining_tokens - 1;
 
         // Penalize greedy attackers by placing duplication check at the very last
@@ -227,19 +261,29 @@ contract RedPacket_ERC1155 is Initializable {
         address token_addr = rp.token_addr;
 
         // TODO NftManager mint mintExistingNFT to user
-        IERC721(token_addr).safeTransferFrom(rp.creator, recipient, claimed_token_id);
+        IERC721(token_addr).safeTransferFrom(
+            rp.creator,
+            recipient,
+            claimed_token_id
+        );
 
-        emit ClaimSuccess(pkt_id, address(recipient), claimed_token_id, token_addr);
+        emit ClaimSuccess(
+            pkt_id,
+            address(recipient),
+            claimed_token_id,
+            token_addr
+        );
         return claimed_token_id;
     }
 
     function checkAvailability(bytes32 pkt_id)
-        external view
+        external
+        view
         returns (
             address token_address,
-            uint16 balance, 
+            uint16 balance,
             uint256 total_pkts,
-            bool expired, 
+            bool expired,
             uint256 claimed_id,
             uint256 bit_status
         )
@@ -256,8 +300,9 @@ contract RedPacket_ERC1155 is Initializable {
     }
 
     function checkClaimedId(bytes32 id)
-        external view
-        returns(uint256 claimed_token_id)
+        external
+        view
+        returns (uint256 claimed_token_id)
     {
         RedPacket storage rp = redpacket_by_id[id];
         claimed_token_id = rp.claimed_list[msg.sender];
@@ -265,8 +310,9 @@ contract RedPacket_ERC1155 is Initializable {
     }
 
     function checkErc721RemainIds(bytes32 id)
-        external view
-        returns(uint256 bit_status, uint256[] memory erc721_token_ids)
+        external
+        view
+        returns (uint256 bit_status, uint256[] memory erc721_token_ids)
     {
         RedPacket storage rp = redpacket_by_id[id];
         erc721_token_ids = rp.erc721_list;
