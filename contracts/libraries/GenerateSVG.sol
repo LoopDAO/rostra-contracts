@@ -2,13 +2,13 @@
 pragma solidity >=0.7.6;
 
 import '@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol';
+import '@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol';
 
 import './NFTSVG.sol';
 import './SafeMath.sol';
 import './HexStrings.sol';
 import './Address.sol';
 
-import '../interface/IERC20Metadata.sol';
 
 library GenerateSVG {
   using SafeMathUpgradeable for uint256;
