@@ -107,7 +107,7 @@ module.exports = {
     path: './abi',
     runOnCompile: true,
     clear: false,
-    flat: true,
+    // flat: true,
     spacing: 2,
     pretty: false,
   }
