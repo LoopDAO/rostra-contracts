@@ -92,6 +92,18 @@
         "internalType": "uint256",
         "name": "duration",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "erc1155TokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "erc1155TokenId",
+        "type": "uint256"
       }
     ],
     "name": "CreationSuccess",
@@ -245,6 +257,16 @@
       {
         "internalType": "uint256",
         "name": "_total_tokens",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_erc1155TokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_erc1155TokenId",
         "type": "uint256"
       }
     ],
