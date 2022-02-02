@@ -116,45 +116,42 @@ contract HappyRedPacket is Initializable {
                 balance_before_transfer
             );
             require(received_amount >= _number, "#received > #packets");
-
-            // 1155 balance check
-            uint256 balance_before_transfer_1155 = IERC1155(_token_addr).balanceOf(
-                address(this),
-                _erc1155TokenId
-            );
-            IERC1155(_token_addr).safeTransferFrom(
-                msg.sender,
-                address(this),
-                _erc1155TokenId,
-                _number,
-                ''
-            );
-            uint256 balance_after_transfer_1155 = IERC1155(_token_addr).balanceOf(
-                address(this),
-                _erc1155TokenId
-            );
-            received_amount = balance_after_transfer_1155.sub(
-                balance_before_transfer_1155
-            );
-            require(received_amount == _number, "#received ERC1155 != #packets");
+            {
+                // 1155 balance check
+                uint256 balance_before_transfer_1155 = IERC1155(_erc1155TokenAddress).balanceOf(
+                    address(this),
+                    _erc1155TokenId
+                );
+                // as a workaround for "CompilerError: Stack too deep, try removing local variables"
+                uint256 number = _number;
+                transferNFT(_erc1155TokenAddress, msg.sender, address(this), _erc1155TokenId, number);
+                received_amount = IERC1155(_erc1155TokenAddress).balanceOf(address(this), _erc1155TokenId).sub(
+                    balance_before_transfer_1155
+                );
+                require(received_amount == number, "#received ERC1155 != #packets");
+            }
         }
 
         bytes32 _id = keccak256(
             abi.encodePacked(msg.sender, block.timestamp, nonce, seed, _seed)
         );
         {
+            // as a workaround for "CompilerError: Stack too deep, try removing local variables"
+            uint256 number = _number;
+            address public_key = _public_key;
+            uint256 duration = _duration;
             uint256 _random_type = _ifrandom ? 1 : 0;
             RedPacket storage redp = redpacket_by_id[_id];
-            redp.packed.packed1 = wrap1(received_amount, _duration);
+            redp.packed.packed1 = wrap1(received_amount, duration);
             redp.packed.packed2 = wrap2(
                 _token_addr,
-                _number,
+                number,
                 _token_type,
                 _random_type
             );
             redp.packed.erc1155TokenAddress = _erc1155TokenAddress;
             redp.packed.erc1155TokenId = _erc1155TokenId;
-            redp.public_key = _public_key;
+            redp.public_key = public_key;
             redp.creator = msg.sender;
         }
         {
@@ -162,19 +159,24 @@ contract HappyRedPacket is Initializable {
             uint256 number = _number;
             bool ifrandom = _ifrandom;
             uint256 duration = _duration;
+            address erc1155TokenAddress = _erc1155TokenAddress;
+            string memory message = _message;
+            string memory name = _name;
+            address token_addr = _token_addr;
+            uint256 erc1155TokenId = _erc1155TokenId;
             emit CreationSuccess(
                 received_amount,
                 _id,
-                _name,
-                _message,
+                name,
+                message,
                 msg.sender,
                 block.timestamp,
-                _token_addr,
+                token_addr,
                 number,
                 ifrandom,
                 duration,
-                _erc1155TokenAddress,
-                _erc1155TokenId
+                erc1155TokenAddress,
+                erc1155TokenId
             );
         }
     }
