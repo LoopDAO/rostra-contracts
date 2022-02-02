@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
@@ -20,6 +21,8 @@ contract HappyRedPacket is Initializable {
     struct Packed {
         uint256 packed1; // 0 (128) total_tokens (96) expire_time(32)
         uint256 packed2; // 0 (64) token_addr (160) claimed_numbers(15) total_numbers(15) token_type(1) ifrandom(1)
+        uint256 erc1155TokenId;
+        address erc1155TokenAddress;
     }
 
     event CreationSuccess(
@@ -32,7 +35,9 @@ contract HappyRedPacket is Initializable {
         address token_address,
         uint256 number,
         bool ifrandom,
-        uint256 duration
+        uint256 duration,
+        address erc1155TokenAddress,
+        uint256 erc1155TokenId
     );
 
     event ClaimSuccess(
@@ -77,7 +82,9 @@ contract HappyRedPacket is Initializable {
         string memory _name,
         uint256 _token_type,
         address _token_addr,
-        uint256 _total_tokens
+        uint256 _total_tokens,
+        address _erc1155TokenAddress,
+        uint256 _erc1155TokenId
     ) public payable {
         nonce++;
         require(_total_tokens >= _number, "#tokens > #packets");
@@ -109,6 +116,27 @@ contract HappyRedPacket is Initializable {
                 balance_before_transfer
             );
             require(received_amount >= _number, "#received > #packets");
+
+            // 1155 balance check
+            uint256 balance_before_transfer_1155 = IERC1155(_token_addr).balanceOf(
+                address(this),
+                _erc1155TokenId
+            );
+            IERC1155(_token_addr).safeTransferFrom(
+                msg.sender,
+                address(this),
+                _erc1155TokenId,
+                _number,
+                ''
+            );
+            uint256 balance_after_transfer_1155 = IERC1155(_token_addr).balanceOf(
+                address(this),
+                _erc1155TokenId
+            );
+            received_amount = balance_after_transfer_1155.sub(
+                balance_before_transfer_1155
+            );
+            require(received_amount == _number, "#received ERC1155 != #packets");
         }
 
         bytes32 _id = keccak256(
@@ -124,6 +152,8 @@ contract HappyRedPacket is Initializable {
                 _token_type,
                 _random_type
             );
+            redp.packed.erc1155TokenAddress = _erc1155TokenAddress;
+            redp.packed.erc1155TokenId = _erc1155TokenId;
             redp.public_key = _public_key;
             redp.creator = msg.sender;
         }
@@ -142,7 +172,9 @@ contract HappyRedPacket is Initializable {
                 _token_addr,
                 number,
                 ifrandom,
-                duration
+                duration,
+                _erc1155TokenAddress,
+                _erc1155TokenId
             );
         }
     }
@@ -205,8 +237,10 @@ contract HappyRedPacket is Initializable {
             15,
             claimed_number + 1
         );
-
         // Transfer the red packet after state changing
+        // Transfer ERC1155 tokens
+        transferNFT(rp.packed.erc1155TokenAddress, address(this), recipient, rp.packed.erc1155TokenId, 1);
+        // Transfer ETH/ERC20 tokens
         if (token_type == 0) recipient.transfer(claimed_tokens);
         else if (token_type == 1)
             transferToken(
@@ -279,6 +313,11 @@ contract HappyRedPacket is Initializable {
         );
 
         rp.packed.packed1 = rewriteBox(packed.packed1, 128, 96, 0);
+
+        uint256 total_number = unbox(packed.packed2, 239, 15);
+        uint256 claimed_number = unbox(packed.packed2, 224, 15);
+
+        transferNFT(rp.packed.erc1155TokenAddress, address(this), msg.sender, rp.packed.erc1155TokenId, total_number - claimed_number);
 
         if (token_type == 0) {
             payable(msg.sender).transfer(remaining_tokens);
@@ -376,6 +415,16 @@ contract HappyRedPacket is Initializable {
         uint256 amount
     ) internal {
         IERC20(token_address).safeTransfer(recipient_address, amount);
+    }
+
+    function transferNFT(
+        address token_address,
+        address from,
+        address recipient,
+        uint256 token_id,
+        uint256 amount
+    ) internal {
+        IERC1155(token_address).safeTransferFrom(from, recipient, token_id, amount, "");
     }
 
     // A boring wrapper
