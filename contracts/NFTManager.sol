@@ -112,6 +112,7 @@ contract NFTManager is
         override
         onlyProxyOwner(_erc1155Proxy)
     {
+        require(guildIdToProxy[_guildId] == address(0), "GuildId already exists");
         proxyToGuildId[_erc1155Proxy] = _guildId;
         guildIdToProxy[_guildId] = _erc1155Proxy;
     }
@@ -183,28 +184,16 @@ contract NFTManager is
         bytes32 _guildId,
         uint256 _tokenId,
         string calldata _uri
-    ) external override nonReentrant {
+    ) external override nonReentrant onlyProxyOwner(guildIdToProxy[_guildId]) {
         address _erc1155Proxy = guildIdToProxy[_guildId];
         require(
             _erc1155Proxy != address(0),
             "NFTManager: Must supply a valid NFT address"
         );
-        require(
-            proxyToOwner[address(_erc1155Proxy)] == msg.sender,
-            "NFTManager: Must the owner of proxy"
-        );
+
         IERC1155Proxy(_erc1155Proxy).setURI(_tokenId, _uri);
 
         emit SetURI(address(_erc1155Proxy), _tokenId, _uri);
-    }
-
-    function getUserIds(address _user)
-        external
-        view
-        override
-        returns (uint256[] memory)
-    {
-        return ownerToIds[_user];
     }
 
     function getOwnerIds(address _owner)

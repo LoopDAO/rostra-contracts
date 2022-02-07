@@ -32,8 +32,6 @@ interface INFTManager {
     string calldata _uri
   ) external;
 
-  function getUserIds(address _user) external view returns (uint256[] memory);
-
   function getOwnerIds(address _owner) external view returns (uint256[] memory);
 
   function getOwnerProxies(address _owner) external view returns (address[] memory);
