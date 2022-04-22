@@ -1,4 +1,4 @@
 export default {
-    ERC1155Proxy: '0x70E5f497c048D8189Bd5f4A209529f8EC45CFd2e',
+    NFTManager: '0xb7B110926076d419485c23E6D231C71304a5aC0A',
     CrowdFunding: '',
 }
