@@ -1,5 +1,7 @@
 # Rostra Contracts
 
+Note: Since we switched to Nervos blockchain, these contracts are not used.
+
 ## Guide
 
 1. Config
